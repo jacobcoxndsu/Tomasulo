@@ -13,4 +13,8 @@ public class InstructionRecord {
 		this.sourceOp2 = sourceOp2;
 	}
 	
+	public String toString(){
+		return "Instruction: op: " + this.opcode + " destOp: " + this.destOp + " sourceOp1: " + this.sourceOp1 + " sourceOp2: " + this.sourceOp2;
+	}
+	
 }

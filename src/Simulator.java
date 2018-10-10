@@ -8,7 +8,7 @@ public class Simulator {
 	private ReservationStation[] addSubRS;
 	private ReservationStation[] multDivRS;
 
-	public Simulator(int cy, int[] ir, int[] rg) {
+	public Simulator(int cy, String[] ir, String[] rg) {
 		
 		//cycles
 		cycles = cy;
@@ -16,10 +16,10 @@ public class Simulator {
 		//instructionRecords
 		instructionRecords = new InstructionRecord[ir.length];
 		for(int i = 0; i < ir.length; i++){
-			int opcode = Integer.toString(ir[i]).charAt(0);
-			int destOp = Integer.toString(ir[i]).charAt(1);
-			int sourceOp1 = Integer.toString(ir[i]).charAt(2);
-			int sourceOp2 = Integer.toString(ir[i]).charAt(3);
+			int opcode = ir[i].charAt(0);
+			int destOp = ir[i].charAt(1);
+			int sourceOp1 = ir[i].charAt(2);
+			int sourceOp2 = ir[i].charAt(3);
 			InstructionRecord inst = new InstructionRecord(opcode, destOp, sourceOp1, sourceOp2);
 			instructionRecords[i] = inst;
 		}
@@ -31,6 +31,15 @@ public class Simulator {
 		//addSubRS
 		
 		//multDivRS
+	}
+	
+	public String toString(){
+		String s = "";
+		for(int i = 0; i < instructionRecords.length; i++){
+			s += instructionRecords[i].toString() + "\n";
+		}
+		
+		return s;
 	}
 
 }
