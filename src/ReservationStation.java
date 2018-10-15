@@ -1,5 +1,13 @@
 
 public class ReservationStation {
+	
+	int busy;
+	int op;
+	int vj;
+	int vk;
+	int qj;
+	int qk;
+	int disp;
 
 	public ReservationStation() {
 		this.busy = -1;
@@ -10,12 +18,4 @@ public class ReservationStation {
 		this.qk = -1;
 		this.disp = -1;
 	}
-
-	int busy;
-	int op;
-	int vj;
-	int vk;
-	int qj;
-	int qk;
-	int disp;
 }
