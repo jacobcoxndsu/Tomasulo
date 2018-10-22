@@ -2,8 +2,11 @@
 public class IQ {
 	
 	private InstructionRecord[] iq;
+	private int currentInstruction;
 	
 	public IQ(String[] ir){
+		currentInstruction = 0;
+		
 		iq = new InstructionRecord[ir.length];
 		for (int i = 0; i < ir.length; i++)
 		{
@@ -19,4 +22,16 @@ public class IQ {
 	public IQ Step(){
 		return this;
 	}
+	
+	public InstructionRecord getCurrentInstruction(){
+		if(currentInstruction < iq.length && currentInstruction > -1){
+			return iq[currentInstruction];
+		}
+		
+		System.out.println("In IQ: Instruction asked for does not exist...");
+		return null;
+		
+	}
+	
+	
 }

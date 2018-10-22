@@ -1,10 +1,11 @@
 
 public class RS {
 	
-	private int[] rs = new int[5];
+	private int[][] rs;
 	
 	public RS(){
-		rs = new int[5];
+		// OP	Qj	Qk	Vj	Vk	Busy
+		rs = new int[5][6]; // 5 Reservation Stations
 	}
 	
 	public RS Step(){

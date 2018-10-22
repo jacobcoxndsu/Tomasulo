@@ -16,30 +16,15 @@ public class Simulator {
 
 		// cycles
 		numCycles = cy;
-
-		// instructionRecords
-		instructionRecords = new InstructionRecord[ir.length];
-		for (int i = 0; i < ir.length; i++)
-		{
-			int opcode = Character.getNumericValue(ir[i].charAt(0));
-			int destOp = Character.getNumericValue(ir[i].charAt(1));
-			int sourceOp1 = Character.getNumericValue(ir[i].charAt(2));
-			int sourceOp2 = Character.getNumericValue(ir[i].charAt(3));
-			InstructionRecord inst = new InstructionRecord(opcode, destOp, sourceOp1, sourceOp2);
-			instructionRecords[i] = inst;
-		}
 		
 		//Create Objects:
 		rf = new RF(rg);
 		rat = new RAT();
-		iq = new IQ();
+		iq = new IQ(ir);	
 		rs = new RS();
 		ud = new UD();
 		
-		
 		/*
-		
-
 		// registerFile
 		registerFile = new int[rg.length];
 		for (int i = 0; i < rg.length; i++)
