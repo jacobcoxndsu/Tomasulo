@@ -20,7 +20,13 @@ public class IQ {
 	}
 	
 	public IQ Step(){
+		
 		return this;
+	}
+	
+	public void Increment()
+	{
+		currentInstruction++;
 	}
 	
 	public InstructionRecord getCurrentInstruction(){
