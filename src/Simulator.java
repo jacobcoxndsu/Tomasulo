@@ -8,7 +8,7 @@ public class Simulator {
 	
 	
 	private int[] registerFile;
-	private int[] RAT;
+	private RAT rat;
 	private ReservationStation[] addSubRS;
 	private ReservationStation[] multDivRS;
 
@@ -38,11 +38,8 @@ public class Simulator {
 		}
 
 		// RAT
-		RAT = new int[8];
-		for (int i = 0; i < 8; i++)
-		{
-			RAT[i] = -1;
-		}
+		rat = new RAT(8);
+		
 
 		// addSubRS
 		addSubRS = new ReservationStation[3];

@@ -1,6 +1,7 @@
 
 public class ReservationStation {
 	
+	
 	boolean busy;
 	int op;
 	int vj;
