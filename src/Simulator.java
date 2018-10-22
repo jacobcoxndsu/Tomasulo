@@ -1,13 +1,15 @@
-
 public class Simulator {
 
 	private int cycle = 0;
 	private int numCycles;
 	private InstructionRecord[] instructionRecords;
 	
-	
-	
-
+	//Structures
+	private RF rf;
+	private RAT rat;
+	private IQ iq;
+	private RS rs;
+	private UD ud;
 
 	public Simulator(int cy, String[] ir, String[] rg)
 	{
@@ -26,6 +28,17 @@ public class Simulator {
 			InstructionRecord inst = new InstructionRecord(opcode, destOp, sourceOp1, sourceOp2);
 			instructionRecords[i] = inst;
 		}
+		
+		//Create Objects:
+		rf = new RF(rg);
+		rat = new RAT();
+		iq = new IQ();
+		rs = new RS();
+		ud = new UD();
+		
+		
+		/*
+		
 
 		// registerFile
 		registerFile = new int[rg.length];
@@ -35,8 +48,11 @@ public class Simulator {
 		}
 
 		// RAT
-		rat = new RAT(8);
-		
+		RAT = new int[8];
+		for (int i = 0; i < 8; i++)
+		{
+			RAT[i] = -1;
+		}
 
 		// addSubRS
 		addSubRS = new RS[3];
@@ -48,6 +64,8 @@ public class Simulator {
 		multDivRS = new RS[2];
 		multDivRS[0] = new RS();
 		multDivRS[1] = new RS();
+		
+		*/
 
 		Run();
 	}
@@ -57,6 +75,11 @@ public class Simulator {
 		while(cycle < numCycles){
 			
 			//Units Step
+			RF rfTemp = rf.Step();
+			RAT ratTemp = rat.Step();
+			IQ iqTemp = iq.Step();
+			RS rsTemp = rs.Step();
+			UD udTemp = ud.Step();
 			
 			//Units remade
 			
@@ -66,6 +89,7 @@ public class Simulator {
 		System.out.println("Finished");
 	}
 
+	/*
 	public void Issue()
 	{
 		InstructionRecord r = instructionRecords[cycle];
@@ -118,22 +142,7 @@ public class Simulator {
 				}
 			}
 		}
-	}
-
-	public void Dispatch()
-	{
-
-	}
-
-	public void Broadcast()
-	{
-
-	}
-
-	public void Commit()
-	{
-
-	}
+	}*/
 
 	public int getCycle()
 	{
