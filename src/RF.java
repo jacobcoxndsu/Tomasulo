@@ -8,7 +8,6 @@ public class RF {
 		for(int i = 0; i < rf.length; i++){
 			rf[i] = Integer.parseInt(rg[i]);
 		}
-		
 	}
 	
 	public RF Step(){
