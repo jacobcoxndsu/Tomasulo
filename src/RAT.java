@@ -13,14 +13,24 @@ public class RAT {
 		}
 	}
 	
-	public RAT Step()
+	public RAT Step(RF rf, RAT rat, RS rs, IQ iq, UD ud)
 	{
-		issue();
-		broadcast();
+		issue(rf,rat,rs,iq,ud);
+		broadcast(rf,rat,rs,iq,ud);
 		return this;
 	}
 	
-	public 
+	public void issue(RF rf, RAT rat, RS rs, IQ iq, UD ud)
+	{
+		//Tag dest reg
+		int ratDestIndex = iq.getCurrentInstruction().destOp;
+		rat[ratDestIndex] = rs.getCurrentRSIndex();
+	}
 	
 
+	public void broadcast(RF rf, RAT rat, RS rs, IQ iq, UD ud)
+	{
+		int ratDestIndex = iq.getCurrentInstruction().destOp;
+		rat[ratDestIndex] = -1;
+	}
 }
