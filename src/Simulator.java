@@ -7,16 +7,7 @@ public class Simulator {
 	
 	
 	
-	private int[] registerFile;
-<<<<<<< HEAD
-	private RAT rat;
-	private ReservationStation[] addSubRS;
-	private ReservationStation[] multDivRS;
-=======
-	private int[] RAT;
-	private RS[] addSubRS;
-	private RS[] multDivRS;
->>>>>>> f33ba2bfc2f41a0c156e250019b033d0f577948d
+
 
 	public Simulator(int cy, String[] ir, String[] rg)
 	{
