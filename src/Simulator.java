@@ -9,8 +9,8 @@ public class Simulator {
 	
 	private int[] registerFile;
 	private int[] RAT;
-	private ReservationStation[] addSubRS;
-	private ReservationStation[] multDivRS;
+	private RS[] addSubRS;
+	private RS[] multDivRS;
 
 	public Simulator(int cy, String[] ir, String[] rg)
 	{
@@ -45,15 +45,15 @@ public class Simulator {
 		}
 
 		// addSubRS
-		addSubRS = new ReservationStation[3];
-		addSubRS[0] = new ReservationStation();
-		addSubRS[1] = new ReservationStation();
-		addSubRS[2] = new ReservationStation();
+		addSubRS = new RS[3];
+		addSubRS[0] = new RS();
+		addSubRS[1] = new RS();
+		addSubRS[2] = new RS();
 
 		// multDivRS
-		multDivRS = new ReservationStation[2];
-		multDivRS[0] = new ReservationStation();
-		multDivRS[1] = new ReservationStation();
+		multDivRS = new RS[2];
+		multDivRS[0] = new RS();
+		multDivRS[1] = new RS();
 
 		Run();
 	}
