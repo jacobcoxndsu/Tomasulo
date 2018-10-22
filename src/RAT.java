@@ -13,6 +13,10 @@ public class RAT {
 		}
 	}
 	
+	public int get(int i){
+		return RatArray[i];
+	}
+	
 	public RAT Step(RF rf, RAT rat, RS rs, IQ iq, UD ud)
 	{
 		issue(rf,rat,rs,iq,ud);

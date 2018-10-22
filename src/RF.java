@@ -10,6 +10,10 @@ public class RF {
 		}
 	}
 	
+	public int get(int i){
+		return rf[i];
+	}
+	
 	public RF Step(UD ud){
 		return this;
 	}
