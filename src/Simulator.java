@@ -1,10 +1,12 @@
 
 public class Simulator {
 
-	private boolean RUNNING = true;
 	private int cycle = 0;
 	private int numCycles;
 	private InstructionRecord[] instructionRecords;
+	
+	
+	
 	private int[] registerFile;
 	private int[] RAT;
 	private ReservationStation[] addSubRS;
@@ -58,23 +60,15 @@ public class Simulator {
 
 	public void Run()
 	{
-		while (RUNNING)
-		{
-
-			Issue();
-			Dispatch();
-			Broadcast();
-			Commit();
-
-			if (cycle > numCycles)
-			{
-				RUNNING = false;
-			}
-
-			// If you need to wait, then dont increment...
+		while(cycle < numCycles){
+			
+			//Units Step
+			
+			//Units remade
+			
 			cycle++;
 		}
-
+	
 		System.out.println("Finished");
 	}
 
