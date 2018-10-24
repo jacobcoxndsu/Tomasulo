@@ -1,7 +1,7 @@
 package com.previous;
 import java.io.IOException;
 
-public class Main {
+/*public class Main {
 	public static void main(String args[]){
 		Input in = new Input("Test.txt");
 		String[] numbers = new String[0];
@@ -14,4 +14,4 @@ public class Main {
 		Simulator simulator;
 		simulator = in.decode(numbers);
 	}
-}
+}*/
