@@ -55,7 +55,8 @@ public class Simulator {
 		//Dispatch
 		
 		//Broadcast
-		
+			//Update the RAT
+			
 		return rf;
 	}
 	
@@ -86,6 +87,14 @@ public class Simulator {
 		
 		//Broadcast
 		
+		if(ud[1][1] == 0)//mult/div is ready
+		{
+			rf[rs[ud[1][0]][7]]
+		}
+		else if(ud[0][1] == 0)
+		{
+			
+		}
 		return ud;
 	}
 	
