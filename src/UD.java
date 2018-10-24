@@ -1,19 +1,30 @@
 
 public class UD {
 	
-	private int[][] ud;
+	private int opCode;
+	private int cc;
 	
 	public UD(){
-		ud = new int[10][2];
-		
-		for(int i = 0; i < ud.length; i++){
-			for(int j = 0; j < ud[i].length; j++){
-				ud[i][j] = -1;
-			}
-		}
+		opCode = -1;
+		cc = -1;
 	}
 	
-	public UD Step(){
+	public boolean setInstruction(int op, int c){
+		if(opCode == -1 || cc == -1){
+			return false;
+		}
+		
+		opCode = op;
+		cc = c;
+		
+		return true;
+	}
+	
+	public UD Step(RS rs, RF rf){
+		if(opCode == -1 || cc == -1){
+			
+		}
+		
 		return this;
 	}
 }

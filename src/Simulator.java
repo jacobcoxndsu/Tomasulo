@@ -19,7 +19,7 @@ public class Simulator {
 		
 		//Create Objects:
 		rf = new RF(rg);
-		rat = new RAT();
+		rat = new RAT(rg);
 		iq = new IQ(ir);	
 		rs = new RS();
 		ud = new UD();
@@ -60,11 +60,11 @@ public class Simulator {
 		while(cycle < numCycles){
 			
 			//Units Step
-			RF rfTemp = rf.Step();
-			RAT ratTemp = rat.Step();
+			RF rfTemp = rf.Step(ud);
+			RAT ratTemp = rat.Step(rf, rat, rs, iq, ud);
 			IQ iqTemp = iq.Step();
-			RS rsTemp = rs.Step();
-			UD udTemp = ud.Step();
+			RS rsTemp = rs.Step(iq, rat, rf);
+			UD udTemp = ud.Step(rs);
 			
 			//Units remade
 			

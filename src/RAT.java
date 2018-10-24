@@ -3,8 +3,9 @@ public class RAT {
 
 	private int[] RatArray;
 	
-	public RAT(int length) {
+	public RAT(String[] rg) {
 		// TODO Auto-generated constructor stub
+		int length = rg.length;
 		RatArray = new int[length];
 				
 		for (int i = 0; i < length; i++)
@@ -28,13 +29,13 @@ public class RAT {
 	{
 		//Tag dest reg
 		int ratDestIndex = iq.getCurrentInstruction().destOp;
-		rat[ratDestIndex] = rs.getCurrentRSIndex();
+		rat.RatArray[ratDestIndex] = rs.getCurrentRSIndex();
 	}
 	
 
 	public void broadcast(RF rf, RAT rat, RS rs, IQ iq, UD ud)
 	{
 		int ratDestIndex = iq.getCurrentInstruction().destOp;
-		rat[ratDestIndex] = -1;
+		rat.RatArray[ratDestIndex] = -1;
 	}
 }
