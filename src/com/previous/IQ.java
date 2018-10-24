@@ -1,3 +1,4 @@
+package com.previous;
 
 public class IQ {
 	

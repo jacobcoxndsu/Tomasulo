@@ -1,3 +1,4 @@
+package com.previous;
 public class Simulator {
 
 	private int cycle = 0;
