@@ -49,49 +49,54 @@ public class Simulator {
 		Run();
 	}
 	
-	private int[] rf_step(){
+	private int[] rf_step(int[] rf, int[] rat, int[][] rs, int[][]ud, InstructionRecord[] iq){
 		//Issue
 		
 		//Dispatch
 		
 		//Broadcast
 		
+		return rf;
 	}
 	
-	private int[] rat_step(){
+	private int[] rat_step(int[] rf, int[] rat, int[][] rs, int[][]ud, InstructionRecord[] iq){
 		//Issue
 		
 		//Dispatch
 		
 		//Broadcast
 		
+		return rat;
 	}
 	
-	private int[][] rs_step(){
+	private int[][] rs_step(int[] rf, int[] rat, int[][] rs, int[][]ud, InstructionRecord[] iq){
 		//Issue
 		
 		//Dispatch
 		
 		//Broadcast
 		
+		return rs;
 	}
 	
-	private int[][] ud_step(){
+	private int[][] ud_step(int[] rf, int[] rat, int[][] rs, int[][]ud, InstructionRecord[] iq){
 		//Issue
 		
 		//Dispatch
 		
 		//Broadcast
 		
+		return ud;
 	}
 	
-	private int[] iq_step(){
+	private InstructionRecord[] iq_step(int[] rf, int[] rat, int[][] rs, int[][]ud, InstructionRecord[] iq){
 		//Issue
 		
 		//Dispatch
 		
 		//Broadcast
 		
+		return iq;
 	}
 	
 	
@@ -106,14 +111,18 @@ public class Simulator {
 		while(cycle < numCycles){
 			
 			//Components Step
-			int[] tempRf = rf_step();
-			int[] tempRf = rf_step();
-			int[] tempRf = rf_step();
-			int[] tempRf = rf_step();
-			int[] tempRf = rf_step();
+			int[] tempRf = rf_step(rf, rat, rs, ud, iq);
+			int[] tempRat = rat_step(rf, rat, rs, ud, iq);
+			int[][] tempRs = rs_step(rf, rat, rs, ud, iq);
+			int[][] tempUd = ud_step(rf, rat, rs, ud, iq);
+			InstructionRecord[] tempIq = iq_step(rf, rat, rs, ud, iq);
 			
 			//Components remade
 			rf = tempRf;
+			rat = tempRat;
+			rs = tempRs;
+			ud = tempUd;
+			iq = tempIq;
 			
 			//Print results
 			Print();

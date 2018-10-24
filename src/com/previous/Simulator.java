@@ -65,7 +65,7 @@ public class Simulator {
 			RAT ratTemp = rat.Step(rf, rat, rs, iq, ud);
 			IQ iqTemp = iq.Step();
 			RS rsTemp = rs.Step(iq, rat, rf);
-			UD udTemp = ud.Step(rs);
+			//UD udTemp = ud.Step(rs);
 			
 			//Units remade
 			
