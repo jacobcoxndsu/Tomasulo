@@ -7,8 +7,8 @@ public class Simulator {
 	//Components
 	private int[] rf;
 	private int[] rat;
-	private int[][] rs = new int[5][6];
-	private int[][] ud;
+	private int[][] rs = new int[5][7];
+	private int[][] eu;
 	private InstructionRecord[] iq;
 	
 	//Structures
@@ -32,7 +32,7 @@ public class Simulator {
 		//Create rs
 		rs = new int[5][6];
 		//Create ud
-		ud = new int[2][2];
+		eu = new int[2][2];
 		//Fill in Instructions
 		iq = new InstructionRecord[ir.length];
 		for (int i = 0; i < ir.length; i++)
@@ -49,7 +49,7 @@ public class Simulator {
 		Run();
 	}
 	
-	private int[] rf_step(int[] rf, int[] rat, int[][] rs, int[][]ud, InstructionRecord[] iq){
+	private int[] rf_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
 		//Issue
 		
 		//Dispatch
@@ -59,9 +59,9 @@ public class Simulator {
 		return rf;
 	}
 	
-	private int[] rat_step(int[] rf, int[] rat, int[][] rs, int[][]ud, InstructionRecord[] iq){
+	private int[] rat_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
 		//Issue
-		
+			
 		//Dispatch
 		
 		//Broadcast
@@ -69,7 +69,7 @@ public class Simulator {
 		return rat;
 	}
 	
-	private int[][] rs_step(int[] rf, int[] rat, int[][] rs, int[][]ud, InstructionRecord[] iq){
+	private int[][] rs_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
 		//Issue
 		
 		//Dispatch
@@ -79,17 +79,17 @@ public class Simulator {
 		return rs;
 	}
 	
-	private int[][] ud_step(int[] rf, int[] rat, int[][] rs, int[][]ud, InstructionRecord[] iq){
+	private int[][] ud_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
 		//Issue
 		
 		//Dispatch
 		
 		//Broadcast
 		
-		return ud;
+		return eu;
 	}
 	
-	private InstructionRecord[] iq_step(int[] rf, int[] rat, int[][] rs, int[][]ud, InstructionRecord[] iq){
+	private InstructionRecord[] iq_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
 		//Issue
 		
 		//Dispatch
@@ -99,11 +99,14 @@ public class Simulator {
 		return iq;
 	}
 	
-	
 	public void Print(){
 		for(int i = 0; i < iq.length; i++){
 			System.out.println(iq[i]);
 		}
+	}
+	
+	public void PrintInstructionQueue(){
+		
 	}
 
 	public void Run()
@@ -111,17 +114,17 @@ public class Simulator {
 		while(cycle < numCycles){
 			
 			//Components Step
-			int[] tempRf = rf_step(rf, rat, rs, ud, iq);
-			int[] tempRat = rat_step(rf, rat, rs, ud, iq);
-			int[][] tempRs = rs_step(rf, rat, rs, ud, iq);
-			int[][] tempUd = ud_step(rf, rat, rs, ud, iq);
-			InstructionRecord[] tempIq = iq_step(rf, rat, rs, ud, iq);
+			int[] tempRf = rf_step(rf, rat, rs, eu, iq);
+			int[] tempRat = rat_step(rf, rat, rs, eu, iq);
+			int[][] tempRs = rs_step(rf, rat, rs, eu, iq);
+			int[][] tempEu = ud_step(rf, rat, rs, eu, iq);
+			InstructionRecord[] tempIq = iq_step(rf, rat, rs, eu, iq);
 			
 			//Components remade
 			rf = tempRf;
 			rat = tempRat;
 			rs = tempRs;
-			ud = tempUd;
+			eu = tempEu;
 			iq = tempIq;
 			
 			//Print results
