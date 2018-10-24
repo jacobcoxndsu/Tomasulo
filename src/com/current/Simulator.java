@@ -7,7 +7,7 @@ public class Simulator {
 	//Components
 	private int[] rf;
 	private int[] rat;
-	private int[][] rs = new int[5][7];
+	private int[][] rs;
 	private int[][] eu;
 	private InstructionRecord[] iq;
 	
@@ -30,7 +30,7 @@ public class Simulator {
 			rat[i] = -1;
 		}
 		//Create rs
-		rs = new int[5][6];
+		rs = new int[5][8];
 		//Create ud
 		eu = new int[2][2];
 		//Fill in Instructions
@@ -93,11 +93,13 @@ public class Simulator {
 			int euLocation = eu[1][0];
 			if(rs[euLocation][0] == 2)
 			{
-				rf[rs[euLocation][7]] = rs[euLocation][3] * rs[euLocation][4];
+				rf[rs[euLocation][6]] = rs[euLocation][3] * rs[euLocation][4];
 			}
 			else
 			{
-				rf[rs[euLocation][7]] = rs[euLocation][3] / rs[euLocation][4];
+				if(rs[euLocation][4] != 0){
+					rf[rs[euLocation][6]] = rs[euLocation][3] / rs[euLocation][4];
+				}
 			}
 				
 		}
@@ -106,11 +108,11 @@ public class Simulator {
 			int euLocation = eu[0][0];
 			if(rs[euLocation][0] == 0)
 			{
-				rf[rs[euLocation][7]] = rs[euLocation][3] + rs[euLocation][4];
+				rf[rs[euLocation][6]] = rs[euLocation][3] + rs[euLocation][4];
 			}
 			else
 			{
-				rf[rs[euLocation][7]] = rs[euLocation][3] - rs[euLocation][4];
+				rf[rs[euLocation][6]] = rs[euLocation][3] - rs[euLocation][4];
 			}
 		}
 		return eu;
@@ -127,13 +129,44 @@ public class Simulator {
 	}
 	
 	public void Print(){
-		for(int i = 0; i < iq.length; i++){
-			System.out.println(iq[i]);
+		
+		PrintInstructionQueue();
+		
+		System.out.println();
+		
+		PrintReservationStation();
+		
+	}
+	
+	public void PrintReservationStation(){
+		System.out.println("                                  --ReservationStation--");
+		String[] info1 = {"          ","Busy", "Op", "Vj", "Vk", "Qj", "Qk", "Dest", "Disp"};
+		
+		System.out.format("%-11s%-11s%-11s%-11s%-11s%-11s%-11s%-11s%-11s\n", info1);
+		System.out.println("--------------------------------------------------------------------------------------------");
+		
+		for(int i = 0; i < rs.length; i++){
+			String[] info2 = new String[9];
+			info2[0] = "    RS" + (i + 1) + "  ";
+			info2[1] = String.valueOf(rs[i][0]);
+			info2[2] = String.valueOf(rs[i][1]);
+			info2[3] = String.valueOf(rs[i][2]);
+			info2[4] = String.valueOf(rs[i][3]);
+			info2[5] = String.valueOf(rs[i][4]);
+			info2[6] = String.valueOf(rs[i][5]);
+			info2[7] = String.valueOf(rs[i][6]);
+			info2[8] = String.valueOf(rs[i][7]);
+			
+			System.out.format("%-11s%-11s%-11s%-11s%-11s%-11s%-11s%-11s%-11s\n", info2);
 		}
+
 	}
 	
 	public void PrintInstructionQueue(){
-		
+		System.out.println("--Instruction Queue--");
+		for(int i = 0; i < iq.length; i++){
+			System.out.println(" " + iq[i]);
+		}
 	}
 
 	public void Run()
@@ -155,12 +188,14 @@ public class Simulator {
 			iq = tempIq;
 			
 			//Print results
-			Print();
+			//Print();
 			
 			//Increments Cycle
 			cycle++;
 		}
+		
+		Print();
 	
-		System.out.println("Finished");
+		//System.out.println("Finished");
 	}
 }

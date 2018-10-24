@@ -15,7 +15,21 @@ public class InstructionRecord {
 	}
 	
 	public String toString(){
-		return "Instruction: op: " + this.opcode + " destOp: " + this.destOp + " sourceOp1: " + this.sourceOp1 + " sourceOp2: " + this.sourceOp2;
+		String returnString = "R[";
+		returnString += this.destOp + "] = ";
+		returnString += "R[" + this.sourceOp1 + "] ";
+		if(this.opcode == 0){
+			returnString += "+ ";
+		} else if(this.opcode == 1){
+			returnString += "- ";
+		} else if(this.opcode == 2){
+			returnString += "* ";
+		} else if(this.opcode == 3){
+			returnString += "/ ";
+		}
+		returnString += "R[" + this.sourceOp2 + "]";
+		
+		return returnString;
 	}
 	
 }
