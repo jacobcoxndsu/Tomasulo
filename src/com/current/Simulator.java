@@ -68,9 +68,29 @@ public class Simulator {
 		
 		//Broadcast
 			//Update the RAT
+		
 		int rsLocation = getEUBroadcast(eu, rs);
 		if(rsLocation != -1){
+<<<<<<< HEAD
 			rf[rs[rsLocation][6]] = calculate(eu, rf);
+=======
+			if(rs[rsLocation][0] == 2)
+			{
+				rf[rs[rsLocation][6]] = rs[rsLocation][3] * rs[rsLocation][4];
+			}
+			else if (rs[rsLocation][0] == 3)
+			{
+				if(rs[rsLocation][4] != 0){
+					rf[rs[rsLocation][6]] = rs[rsLocation][3] / rs[rsLocation][4];
+				} else {
+					System.out.println("Attempted to divide by zero...");
+				}
+			} else if(rs[rsLocation][0] == 0) {
+				rf[rs[rsLocation][6]] = rs[rsLocation][3] + rs[rsLocation][4];
+			} else if(rs[rsLocation][0] == 1) {
+				rf[rs[rsLocation][6]] = rs[rsLocation][3] - rs[rsLocation][4];
+			}		
+>>>>>>> parent of 1a90bd2... Update src/com/current/Simulator.java
 		}
 
 		return rf;
@@ -184,6 +204,7 @@ public class Simulator {
 		int rsAddressMatch = getEUBroadcast(eu,rs);
 		int replacementValue = calculate(eu,rf);
 		
+<<<<<<< HEAD
 		for(int i = 0; i < rs.length; i++)
 		{
 			if(rs[i][1] == rsAddressMatch)
@@ -199,6 +220,8 @@ public class Simulator {
 		}
 		
 		
+=======
+>>>>>>> parent of 1a90bd2... Update src/com/current/Simulator.java
 	    //Broadcast
 		int location = getEUBroadcast(eu, rs);
 		if(location != -1){
@@ -402,32 +425,6 @@ public class Simulator {
 			}
 		}
 		 return -1;
-	}
-	
-	public int calculate(int[][]eu, int[] rf){
-		
-		int rsLocation = getEUBroadcast(eu, rs);
-		
-		if(rsLocation != -1){
-			if(rs[rsLocation][0] == 2)
-			{
-				return rs[rsLocation][3] * rs[rsLocation][4];
-			}
-			else if (rs[rsLocation][0] == 3)
-			{
-				if(rs[rsLocation][4] != 0){
-					return rs[rsLocation][3] / rs[rsLocation][4];
-				} else {
-					System.out.println("Attempted to divide by zero...");
-				}
-			} else if(rs[rsLocation][0] == 0) {
-				return rs[rsLocation][3] + rs[rsLocation][4];
-			} else if(rs[rsLocation][0] == 1) {
-				return rs[rsLocation][3] - rs[rsLocation][4];
-			}		
-		}
-		
-		return -1;
 	}
 
 	public void Run()
