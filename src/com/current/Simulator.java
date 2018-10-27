@@ -305,7 +305,7 @@ public class Simulator {
 				}
 			} 
 		}
-		 return -999;
+		 return -1;
 	}
 
 	public void Run()
