@@ -3,6 +3,7 @@ public class Simulator {
 
 	private int cycle = 0;
 	private int numCycles;
+	private int head;
 	
 	//Components
 	private int[] rf;
@@ -80,13 +81,12 @@ public class Simulator {
 		return rs;
 	}
 	
-	private int[][] ud_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
+	private int[][] eu_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
 		//Issue
 		
 		//Dispatch
 		
 		//Broadcast
-		
 		if(eu[1][1] == 0)//mult/div is ready
 		{
 			
@@ -120,20 +120,16 @@ public class Simulator {
 	
 	private InstructionRecord[] iq_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
 		//Issue
-		//Take next inst from IQ
-		int currentRS;
-		if(iq[cycle].opcode == 0 || iq[cycle].opcode == 1)
-		{
-			currentRS = 0;
-			if(rs[currentRS][0] != 1)//check the busy bit
-			{
-				rs[currentRS][0] = 1;
+		
+		boolean canIssue = false;
+		int tempOpcode = iq[head].opcode;
+		
+		//if()
+		
+		for(int i = 0; i < rs.length; i++){
+			for(int j = 0; j < rs[i].length; i++){
+				
 			}
-			
-		}
-		else
-		{
-			
 		}
 		
 		//Dispatch
@@ -213,7 +209,7 @@ public class Simulator {
 			int[] tempRf = rf_step(rf, rat, rs, eu, iq);
 			int[] tempRat = rat_step(rf, rat, rs, eu, iq);
 			int[][] tempRs = rs_step(rf, rat, rs, eu, iq);
-			int[][] tempEu = ud_step(rf, rat, rs, eu, iq);
+			int[][] tempEu = eu_step(rf, rat, rs, eu, iq);
 			InstructionRecord[] tempIq = iq_step(rf, rat, rs, eu, iq);
 			
 			//Components remade
