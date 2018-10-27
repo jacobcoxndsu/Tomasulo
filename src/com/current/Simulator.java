@@ -67,6 +67,9 @@ public class Simulator {
 		//Dispatch
 		
 		//Broadcast
+		for(int i = 0; i < eu.length; i++){
+			
+		}
 		
 		return rat;
 	}
@@ -127,9 +130,9 @@ public class Simulator {
 				}
 				//set the destination register
 				rs[currentRS][5] = iq[head].destOp;
-				
+
 				break;
-				
+
 			}
 			else
 			{
@@ -185,6 +188,7 @@ public class Simulator {
 	private InstructionRecord[] iq_step(int[][] rs, InstructionRecord[] iq){
 		//get temp variables
 		rs = rs.clone();
+		iq = iq.clone();
 
 		boolean canIssue = false;
 		int tempOpcode = iq[head].opcode;
@@ -271,6 +275,8 @@ public class Simulator {
 			System.out.println();
 		}
 	}
+	
+	//public int get
 
 	public void Run()
 	{
@@ -291,7 +297,7 @@ public class Simulator {
 			iq = tempIq;
 			
 			//Print results
-			//Print();
+			Print();
 			
 			//Increments Cycle
 			cycle++;
