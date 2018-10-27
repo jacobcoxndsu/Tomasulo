@@ -72,6 +72,36 @@ public class Simulator {
 	
 	private int[][] rs_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
 		//Issue
+		//busy op Vj Vk Qj Qk Dest Disp
+		//Take next inst from IQ
+		int currentRS;
+		if(iq[cycle].opcode == 0 || iq[cycle].opcode == 1)
+		{
+			currentRS = 0;
+			if(rs[currentRS][0] != 1)//check the busy bit
+			{
+				//Take the instruction from IQ
+				rs[currentRS][0] = 1;
+				//op dest src1 src2
+				//Determine where inputs come from
+				if(rat[iq[cycle]] != -1)
+				{
+					//Use the value tag in RS
+					rs[currentRS][3] = rat[iq[cycle]];
+				}
+				
+			}
+			else
+			{
+				//Go to the next RS
+				currentRS++;
+			}
+			
+		}
+		else
+		{
+			
+		}
 		
 		//Dispatch
 		
@@ -120,21 +150,8 @@ public class Simulator {
 	
 	private InstructionRecord[] iq_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
 		//Issue
-		//Take next inst from IQ
-		int currentRS;
-		if(iq[cycle].opcode == 0 || iq[cycle].opcode == 1)
-		{
-			currentRS = 0;
-			if(rs[currentRS][0] != 1)//check the busy bit
-			{
-				rs[currentRS][0] = 1;
-			}
-			
-		}
-		else
-		{
-			
-		}
+		
+		
 		
 		//Dispatch
 		
