@@ -79,7 +79,7 @@ public class Simulator {
 		int currentRS;
 		int endOfRS;
 		//Is it an add/sub or mult/div?
-		if(iq[cycle].opcode == 0 || iq[cycle].opcode == 1)
+		if(iq[head].opcode == 0 || iq[head].opcode == 1)
 		{
 			currentRS = 0;
 			endOfRS = 2;
@@ -128,6 +128,8 @@ public class Simulator {
 				//set the destination register
 				rs[currentRS][5] = iq[head].destOp;
 				
+				break;
+				
 			}
 			else
 			{
@@ -136,6 +138,7 @@ public class Simulator {
 			}
 		}			
 	//Dispatch
+		
 		
 	//Broadcast
 		
