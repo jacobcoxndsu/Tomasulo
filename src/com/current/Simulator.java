@@ -59,7 +59,29 @@ public class Simulator {
 		
 		//Broadcast
 			//Update the RAT
-			
+		
+		int rsLocation = getEUBroadcast(eu, rs);
+		
+		
+		//Broadcast
+
+			if(rs[rsLocation][0] == 2)
+			{
+				rf[rs[rsLocation][6]] = rs[rsLocation][3] * rs[rsLocation][4];
+			}
+			else if (rs[rsLocation][0] == 3)
+			{
+				if(rs[rsLocation][4] != 0){
+					rf[rs[rsLocation][6]] = rs[rsLocation][3] / rs[rsLocation][4];
+				} else {
+					System.out.println("Attempted to divide by zero...");
+				}
+			} else if(rs[rsLocation][0] == 0) {
+				rf[rs[rsLocation][6]] = rs[rsLocation][3] + rs[rsLocation][4];
+			} else if(rs[rsLocation][0] == 1) {
+				rf[rs[rsLocation][6]] = rs[rsLocation][3] - rs[rsLocation][4];
+			}
+				
 		return rf;
 	}
 	
@@ -157,35 +179,7 @@ public class Simulator {
 		
 		//Dispatch
 		
-		//Broadcast
-		if(eu[1][1] == 0)//mult/div is ready
-		{
-			
-			int euLocation = eu[1][0];
-			if(rs[euLocation][0] == 2)
-			{
-				rf[rs[euLocation][6]] = rs[euLocation][3] * rs[euLocation][4];
-			}
-			else
-			{
-				if(rs[euLocation][4] != 0){
-					rf[rs[euLocation][6]] = rs[euLocation][3] / rs[euLocation][4];
-				}
-			}
-				
-		}
-		else if(eu[0][1] == 0)//add/sub is ready
-		{
-			int euLocation = eu[0][0];
-			if(rs[euLocation][0] == 0)
-			{
-				rf[rs[euLocation][6]] = rs[euLocation][3] + rs[euLocation][4];
-			}
-			else
-			{
-				rf[rs[euLocation][6]] = rs[euLocation][3] - rs[euLocation][4];
-			}
-		}
+		
 		return eu;
 	}
 	
