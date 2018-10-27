@@ -72,24 +72,61 @@ public class Simulator {
 	}
 	
 	private int[][] rs_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
+		rs = rs.clone();
 		//Issue
-		//busy op Vj Vk Qj Qk Dest Disp
+		
 		//Take next inst from IQ
 		int currentRS;
+		int endOfRS;
+		//Is it an add/sub or mult/div?
 		if(iq[cycle].opcode == 0 || iq[cycle].opcode == 1)
 		{
 			currentRS = 0;
-			if(rs[currentRS][0] != 1)//check the busy bit
+			endOfRS = 2;
+		}
+		else
+		{
+			currentRS = 3;
+			endOfRS = 4;
+		}
+		
+		while(currentRS <= endOfRS)
+		{
+			//check the busy bit
+			if(rs[currentRS][0] == 0)
 			{
-				//Take the instruction from IQ
+				//Take the instruction from IQ - set busy bit
 				rs[currentRS][0] = 1;
-				//op dest src1 src2
+				
 				//Determine where inputs come from
-				if(rat[iq[cycle]] != -1)
+				if(rat[iq[head].sourceOp1] != -1)
 				{
 					//Use the value tag in RS
-					rs[currentRS][3] = rat[iq[cycle]];
+					rs[currentRS][3] = rat[iq[head].sourceOp1];
+					rs[currentRS][1] = -1;
 				}
+				else
+				{
+					//use the value from rf
+					rs[currentRS][1] = rf[iq[head].sourceOp1];
+					rs[currentRS][3] = -1;
+				}
+				
+				//Do the same for second source
+				if(rat[iq[head].sourceOp2] != -1)
+				{
+					//Use the value tag in RS
+					rs[currentRS][4] = rat[iq[head].sourceOp2];
+					rs[currentRS][2] = -1;
+				}
+				else
+				{
+					//use the value from rf
+					rs[currentRS][2] = rf[iq[head].sourceOp2];
+					rs[currentRS][4] = -1;
+				}
+				//set the destination register
+				rs[currentRS][5] = iq[head].destOp;
 				
 			}
 			else
@@ -97,16 +134,10 @@ public class Simulator {
 				//Go to the next RS
 				currentRS++;
 			}
-			
-		}
-		else
-		{
-			
-		}
+		}			
+	//Dispatch
 		
-		//Dispatch
-		
-		//Broadcast
+	//Broadcast
 		
 		return rs;
 	}
