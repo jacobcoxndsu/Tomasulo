@@ -15,10 +15,10 @@ public class Simulator {
 	//Structures
 
 
-	public Simulator(int cy, String[] ir, String[] rg)
+	public Simulator(int cy, int ns, String[] ir, String[] rg)
 	{
 		//Create cycles
-		numCycles = cy;
+		numCycles = ns;
 		head = 0;
 		
 		
@@ -34,8 +34,16 @@ public class Simulator {
 		}
 		//Create rs
 		rs = new int[5][8];
+		for(int i = 0; i < rs.length; i++){
+			rs[i][1] = -1;
+			rs[i][2] = -1;
+			rs[i][3] = -1;
+			rs[i][4] = -1;
+		}
 		//Create ud
 		eu = new int[2][2];
+		eu[0][0] = -1;
+		eu[1][0] = -1;
 		//Fill in Instructions
 		iq = new InstructionRecord[ir.length];
 		for (int i = 0; i < ir.length; i++)
@@ -53,6 +61,7 @@ public class Simulator {
 	}
 	
 	private int[] rf_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
+		rf = rf.clone();
 		//Issue
 		
 		//Dispatch
@@ -61,10 +70,7 @@ public class Simulator {
 			//Update the RAT
 		
 		int rsLocation = getEUBroadcast(eu, rs);
-		
-		
-		//Broadcast
-
+		if(rsLocation != -1){
 			if(rs[rsLocation][0] == 2)
 			{
 				rf[rs[rsLocation][6]] = rs[rsLocation][3] * rs[rsLocation][4];
@@ -80,105 +86,163 @@ public class Simulator {
 				rf[rs[rsLocation][6]] = rs[rsLocation][3] + rs[rsLocation][4];
 			} else if(rs[rsLocation][0] == 1) {
 				rf[rs[rsLocation][6]] = rs[rsLocation][3] - rs[rsLocation][4];
-			}
-				
+			}		
+		}
+
 		return rf;
 	}
 	
 	private int[] rat_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
+		rat = rat.clone();
 		//Issue
+		if(head < iq.length){
 			
-		//Dispatch
-		
-		//Broadcast
-		for(int i = 0; i < eu.length; i++){
+			int destination = iq[head].destOp;
+			int opcode = iq[head].opcode;
 			
-		}
+			if(opcode == 0 || opcode == 1){ //Add/Subtract
+				for(int i = 0; i < 3; i++){
+					if(rs[i][5] == 0){
+						rat[destination] = i;
+					}
+				}
+			}
+			
+			if(opcode == 2 || opcode == 3){ //Multiply/Divide
+				for(int i = 3; i < rs.length; i++){
+					if(rs[i][5] == 0){
+						rat[destination] = i;
+					}
+				}
+			}
+			
+			//Broadcast
+			int location = getEUBroadcast(eu, rs);
+			if(location != -1)
+				rat[rs[location][6]] = -1;
+		} 
 		
 		return rat;
 	}
 	
 	private int[][] rs_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
 		rs = rs.clone();
-	//Issue
+	    //Issue
 		
-		//Take next inst from IQ
-		int currentRS;
-		int endOfRS;
-		//Is it an add/sub or mult/div?
-		if(iq[head].opcode == 0 || iq[head].opcode == 1)
-		{
-			currentRS = 0;
-			endOfRS = 2;
-		}
-		else
-		{
-			currentRS = 3;
-			endOfRS = 4;
-		}
-		
-		while(currentRS <= endOfRS)
-		{
-			//check the busy bit
-			if(rs[currentRS][5] == 0)
+		if(head < iq.length){
+			//Take next inst from IQ
+			int currentRS;
+			int endOfRS;
+			//Is it an add/sub or mult/div?
+			if(iq[head].opcode == 0 || iq[head].opcode == 1)
 			{
-				rs[currentRS][0] = iq[head].opcode;
-				
-				//Take the instruction from IQ - set busy bit
-				rs[currentRS][5] = 1;
-				
-				//Determine where inputs come from
-				if(rat[iq[head].sourceOp1] != -1)
-				{
-					//Use the value tag in RS
-					rs[currentRS][1] = rat[iq[head].sourceOp1];
-					rs[currentRS][3] = -1;
-				}
-				else
-				{
-					//use the value from rf
-					rs[currentRS][3] = rf[iq[head].sourceOp1];
-					rs[currentRS][1] = -1;
-				}
-				
-				//Do the same for second source
-				if(rat[iq[head].sourceOp2] != -1)
-				{
-					//Use the value tag in RS
-					rs[currentRS][2] = rat[iq[head].sourceOp2];
-					rs[currentRS][4] = -1;
-				}
-				else
-				{
-					//use the value from rf
-					rs[currentRS][4] = rf[iq[head].sourceOp2];
-					rs[currentRS][2] = -1;
-				}
-				//set the destination register
-				rs[currentRS][6] = iq[head].destOp;
-
-				break;
-
+				currentRS = 0;
+				endOfRS = 2;
 			}
 			else
 			{
-				//Go to the next RS
-				currentRS++;
+				currentRS = 3;
+				endOfRS = 4;
 			}
-		}			
-	//Dispatch
+			
+			while(currentRS <= endOfRS)
+			{
+				//check the busy bit
+				if(rs[currentRS][5] == 0)
+				{
+					rs[currentRS][0] = iq[head].opcode;
+					
+					//Take the instruction from IQ - set busy bit
+					rs[currentRS][5] = 1;
+					
+					//Determine where inputs come from
+					if(rat[iq[head].sourceOp1] != -1)
+					{
+						//Use the value tag in RS
+						rs[currentRS][1] = rat[iq[head].sourceOp1];
+						rs[currentRS][3] = -1;
+					}
+					else
+					{
+						//use the value from rf
+						rs[currentRS][3] = rf[iq[head].sourceOp1];
+						rs[currentRS][1] = -1;
+					}
+					
+					//Do the same for second source
+					if(rat[iq[head].sourceOp2] != -1)
+					{
+						//Use the value tag in RS
+						rs[currentRS][2] = rat[iq[head].sourceOp2];
+						rs[currentRS][4] = -1;
+					}
+					else
+					{
+						//use the value from rf
+						rs[currentRS][4] = rf[iq[head].sourceOp2];
+						rs[currentRS][2] = -1;
+					}
+					//set the destination register
+					rs[currentRS][6] = iq[head].destOp;
+
+					break;
+
+				}
+				else
+				{
+					//Go to the next RS
+					currentRS++;
+				}
+			}			
+		}
 		
 		
-	//Broadcast
+	    //Broadcast
+		int location = getEUBroadcast(eu, rs);
+		if(location != -1){
+			rs[location][5] = 0;
+		}
 		
 		return rs;
 	}
 	
 	private int[][] eu_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
+		eu = eu.clone();
 		//Issue
 		
 		//Dispatch
+		for(int i = 0; i < 3; i++){
+			if(rs[i][3] != -1 && rs[i][4] != -1){
+				if(eu[0][0] == -1){
+					eu[0][0] = i;
+					eu[0][1] = 0;
+				}
+			}
+		}
 		
+		for(int i = 3; i < rs.length; i++){
+			if(rs[i][3] != -1 && rs[i][4] != -1){
+				if(eu[1][0] == -1){
+					eu[1][0] = i;
+					eu[1][1] = 0;
+				}
+			}
+		}
+		
+		
+		//Check if they are done...
+		int locationInEU = getEUBroadcastInEU(eu, rs);
+		if(locationInEU != -1){
+			eu[locationInEU][1] = -1;
+		}
+		
+		if(eu[0][0] != -1){
+			eu[0][1]++;
+		}
+		
+		if(eu[1][0] != -1){
+			eu[1][1]++;
+		}
 		
 		return eu;
 	}
@@ -189,24 +253,29 @@ public class Simulator {
 		iq = iq.clone();
 
 		boolean canIssue = false;
-		int tempOpcode = iq[head].opcode;
-		
-		if(tempOpcode == 0 || tempOpcode == 1){
-			for(int i = 0; i < rs.length - 2; i++){
-				if(rs[i][0] != 1){
-					canIssue = true;
+		if(head < iq.length){
+			int tempOpcode = iq[head].opcode;
+			
+			if(tempOpcode == 0 || tempOpcode == 1){
+				for(int i = 0; i < rs.length - 2; i++){
+					if(rs[i][0] != 1){
+						canIssue = true;
+					}
 				}
-			}
-		} else if(tempOpcode == 2 || tempOpcode == 3){
-			for(int i = 2; i < rs.length; i++){
-				if(rs[i][0] != 1){
-					canIssue = true;
+			} else if(tempOpcode == 2 || tempOpcode == 3){
+				for(int i = 2; i < rs.length; i++){
+					if(rs[i][0] != 1){
+						canIssue = true;
+					}
 				}
 			}
 		}
 		
+		
 		if(canIssue){
-			head++;
+			if(head < iq.length){
+				head++;
+			}
 		}
 		
 		return iq;
@@ -215,6 +284,8 @@ public class Simulator {
 	public void Print(){
 		
 		System.out.println("\n\n\n");
+		
+		System.out.println("Cycle: " + cycle);
 		
 		PrintInstructionQueue();
 		
@@ -282,29 +353,59 @@ public class Simulator {
 		for(int i = 0; i < 2; i++){
 			int cc = eu[i][1];
 			int location = eu[i][0];
+			if(location != -1){
+				int type = rs[location][0];
+				
+				if(type == 2){
+					if(cc > 10){
+						return location;
+					}
+				} else if(type == 2){
+					if(cc > 40){
+						return location;
+					}
+				} else if(type == 0 || type == 1){
+					if(cc > 2){
+						return location;
+					}
+				} 
+			}
 			
-			int type = rs[location][0];
+		}
+		 return -1;
+	}
+	
+	public int getEUBroadcastInEU(int[][] eu, int[][] rs){
+		//Check Multiply/Divide first
+		for(int i = 0; i < 2; i++){
+			int cc = eu[i][1];
+			int location = eu[i][0];
 			
-			if(type == 2){
-				if(cc > 10){
-					return location;
-				}
-			} else if(type == 2){
-				if(cc > 40){
-					return location;
-				}
-			} else if(type == 0 || type == 1){
-				if(cc > 2){
-					return location;
-				}
-			} 
+			if(location != -1){
+				int type = rs[location][0];
+				
+				if(type == 2){
+					if(cc > 10){
+						return i;
+					}
+				} else if(type == 2){
+					if(cc > 40){
+						return i;
+					}
+				} else if(type == 0 || type == 1){
+					if(cc > 2){
+						return i;
+					}
+				} 
+			}
 		}
 		 return -1;
 	}
 
 	public void Run()
 	{
-		Print();
+		PrintInstructionQueue();
+		System.out.println("\n\n");
 		
 		while(cycle < numCycles){
 			

@@ -34,7 +34,7 @@ public class Input {
 	    return n;
 	}
 	
-	public Simulator decode(String[] file){
+	public Simulator decode(String[] file){		
 		int instructionAmount = Integer.parseInt(file[0]);
 		int numberOfCycles = Integer.parseInt(file[1]);
 		String[] instructions = new String[instructionAmount];
@@ -48,6 +48,6 @@ public class Input {
 			registerValues[i - instructionAmount - 2] = file[i];
 		}
 		
-		return new Simulator(instructionAmount, instructions, registerValues);
+		return new Simulator(instructionAmount, numberOfCycles, instructions, registerValues);
 	}
 }
