@@ -148,23 +148,30 @@ public class Simulator {
 		return eu;
 	}
 	
-	private InstructionRecord[] iq_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
-		//Issue
+	private InstructionRecord[] iq_step(int[][] rs, InstructionRecord[] iq){
+		//get temp variables
+		rs = rs.clone();
 
 		boolean canIssue = false;
 		int tempOpcode = iq[head].opcode;
 		
-		//if()
-		
-		for(int i = 0; i < rs.length; i++){
-			for(int j = 0; j < rs[i].length; i++){
-				
+		if(tempOpcode == 0 || tempOpcode == 1){
+			for(int i = 0; i < rs.length - 2; i++){
+				if(rs[i][0] != 1){
+					canIssue = true;
+				}
+			}
+		} else if(tempOpcode == 2 || tempOpcode == 3){
+			for(int i = 2; i < rs.length; i++){
+				if(rs[i][0] != 1){
+					canIssue = true;
+				}
 			}
 		}
 		
-		//Dispatch
-		
-		//Broadcast
+		if(canIssue){
+			head++;
+		}
 		
 		return iq;
 	}
@@ -240,7 +247,7 @@ public class Simulator {
 			int[] tempRat = rat_step(rf, rat, rs, eu, iq);
 			int[][] tempRs = rs_step(rf, rat, rs, eu, iq);
 			int[][] tempEu = eu_step(rf, rat, rs, eu, iq);
-			InstructionRecord[] tempIq = iq_step(rf, rat, rs, eu, iq);
+			InstructionRecord[] tempIq = iq_step(rs, iq);
 			
 			//Components remade
 			rf = tempRf;
