@@ -120,6 +120,21 @@ public class Simulator {
 	
 	private InstructionRecord[] iq_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
 		//Issue
+		//Take next inst from IQ
+		int currentRS;
+		if(iq[cycle].opcode == 0 || iq[cycle].opcode == 1)
+		{
+			currentRS = 0;
+			if(rs[currentRS][0] != 1)//check the busy bit
+			{
+				rs[currentRS][0] = 1;
+			}
+			
+		}
+		else
+		{
+			
+		}
 		
 		//Dispatch
 		
