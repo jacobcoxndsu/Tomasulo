@@ -8,7 +8,7 @@ public class Simulator {
 	//Components
 	private int[] rf;
 	private int[] rat;
-	private int[][] rs; //OP	Qj	Qk	Vj	Vk	Busy
+	private int[][] rs; //op qj qk vj vk busy dest disp
 	private int[][] eu;
 	private InstructionRecord[] iq;
 	
@@ -19,6 +19,8 @@ public class Simulator {
 	{
 		//Create cycles
 		numCycles = cy;
+		head = 0;
+		
 		
 		//Create rf
 		rf = new int[rg.length];
@@ -98,6 +100,8 @@ public class Simulator {
 			//check the busy bit
 			if(rs[currentRS][5] == 0)
 			{
+				rs[currentRS][0] = iq[head].opcode;
+				
 				//Take the instruction from IQ - set busy bit
 				rs[currentRS][5] = 1;
 				
@@ -216,6 +220,8 @@ public class Simulator {
 	
 	public void Print(){
 		
+		System.out.println("\n\n\n");
+		
 		PrintInstructionQueue();
 		
 		System.out.println();
@@ -228,9 +234,10 @@ public class Simulator {
 		
 	}
 	
+	//op qj qk vj vk busy dest disp
 	public void PrintReservationStation(){
 		System.out.println("                                  --ReservationStation--");
-		String[] info1 = {"          ","Busy", "Op", "Vj", "Vk", "Qj", "Qk", "Dest", "Disp"};
+		String[] info1 = {"          ","Op", "Qj", "Qk", "Vj", "Vk", "Busy", "Dest", "Disp"};
 		
 		System.out.format("%-11s%-11s%-11s%-11s%-11s%-11s%-11s%-11s%-11s\n", info1);
 		System.out.println("--------------------------------------------------------------------------------------------");
@@ -254,7 +261,7 @@ public class Simulator {
 	
 	public void PrintInstructionQueue(){
 		System.out.println("--Instruction Queue--");
-		for(int i = iq.length - 1; i > head; i--){
+		for(int i = iq.length - 1; i >= head; i--){
 			System.out.println(" " + iq[i]);
 		}
 	}
@@ -276,10 +283,35 @@ public class Simulator {
 		}
 	}
 	
-	//public int get
+	public int getEUBroadcast(int[][] eu, int[][] rs){
+		//Check Multiply/Divide first
+		for(int i = 0; i < 2; i++){
+			int cc = eu[i][1];
+			int location = eu[i][0];
+			
+			int type = rs[location][0];
+			
+			if(type == 2){
+				if(cc > 10){
+					return i;
+				}
+			} else if(type == 2){
+				if(cc > 40){
+					return i;
+				}
+			} else if(type == 0 || type == 1){
+				if(cc > 2){
+					return i;
+				}
+			} 
+		}
+		 return -999;
+	}
 
 	public void Run()
 	{
+		Print();
+		
 		while(cycle < numCycles){
 			
 			//Components Step
