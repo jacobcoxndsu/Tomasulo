@@ -71,9 +71,6 @@ public class Simulator {
 		
 		int rsLocation = getEUBroadcast(eu, rs);
 		if(rsLocation != -1){
-<<<<<<< HEAD
-			rf[rs[rsLocation][6]] = calculate(eu, rf);
-=======
 			if(rs[rsLocation][0] == 2)
 			{
 				rf[rs[rsLocation][6]] = rs[rsLocation][3] * rs[rsLocation][4];
@@ -90,7 +87,6 @@ public class Simulator {
 			} else if(rs[rsLocation][0] == 1) {
 				rf[rs[rsLocation][6]] = rs[rsLocation][3] - rs[rsLocation][4];
 			}		
->>>>>>> parent of 1a90bd2... Update src/com/current/Simulator.java
 		}
 
 		return rf;
@@ -200,32 +196,11 @@ public class Simulator {
 			}			
 		}
 		
-		//Dispatch
-		int rsAddressMatch = getEUBroadcast(eu,rs);
-		int replacementValue = calculate(eu,rf);
 		
-<<<<<<< HEAD
-		for(int i = 0; i < rs.length; i++)
-		{
-			if(rs[i][1] == rsAddressMatch)
-			{
-				rs[i][1] = -1;
-				rs[i][3] = replacementValue;
-			}
-			if(rs[i][2] == rsAddressMatch)
-			{
-				rs[i][2] = -1;
-				rs[i][4] = replacementValue;
-			}
-		}
-		
-		
-=======
->>>>>>> parent of 1a90bd2... Update src/com/current/Simulator.java
 	    //Broadcast
 		int location = getEUBroadcast(eu, rs);
 		if(location != -1){
-			rs[location][5] = 0;
+			rs[location][6] = 0;
 		}
 		
 		return rs;
