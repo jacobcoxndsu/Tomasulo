@@ -69,7 +69,9 @@ public class Simulator {
 		//Broadcast
 			//Update the RAT
 		int rsLocation = getEUBroadcast(eu, rs);
-		rf[rs[rsLocation][6]] = calculate(eu, rf);
+		if(rsLocation != -1){
+			rf[rs[rsLocation][6]] = calculate(eu, rf);
+		}
 
 		return rf;
 	}
