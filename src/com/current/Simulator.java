@@ -254,7 +254,7 @@ public class Simulator {
 	
 	public void PrintInstructionQueue(){
 		System.out.println("--Instruction Queue--");
-		for(int i = 0; i < iq.length; i++){
+		for(int i = iq.length - 1; i > head; i--){
 			System.out.println(" " + iq[i]);
 		}
 	}
