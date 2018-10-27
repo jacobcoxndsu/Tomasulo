@@ -293,15 +293,15 @@ public class Simulator {
 			
 			if(type == 2){
 				if(cc > 10){
-					return i;
+					return location;
 				}
 			} else if(type == 2){
 				if(cc > 40){
-					return i;
+					return location;
 				}
 			} else if(type == 0 || type == 1){
 				if(cc > 2){
-					return i;
+					return location;
 				}
 			} 
 		}
