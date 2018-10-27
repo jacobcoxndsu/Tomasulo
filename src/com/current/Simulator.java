@@ -68,26 +68,8 @@ public class Simulator {
 		
 		//Broadcast
 			//Update the RAT
-		
 		int rsLocation = getEUBroadcast(eu, rs);
-		if(rsLocation != -1){
-			if(rs[rsLocation][0] == 2)
-			{
-				rf[rs[rsLocation][6]] = rs[rsLocation][3] * rs[rsLocation][4];
-			}
-			else if (rs[rsLocation][0] == 3)
-			{
-				if(rs[rsLocation][4] != 0){
-					rf[rs[rsLocation][6]] = rs[rsLocation][3] / rs[rsLocation][4];
-				} else {
-					System.out.println("Attempted to divide by zero...");
-				}
-			} else if(rs[rsLocation][0] == 0) {
-				rf[rs[rsLocation][6]] = rs[rsLocation][3] + rs[rsLocation][4];
-			} else if(rs[rsLocation][0] == 1) {
-				rf[rs[rsLocation][6]] = rs[rsLocation][3] - rs[rsLocation][4];
-			}		
-		}
+		rf[rs[rsLocation][6]] = calculate(eu, rf);
 
 		return rf;
 	}
@@ -196,11 +178,29 @@ public class Simulator {
 			}			
 		}
 		
+		//Dispatch
+		int rsAddressMatch = getEUBroadcast(eu,rs);
+		int replacementValue = calculate(eu,rf);
+		
+		for(int i = 0; i < rs.length; i++)
+		{
+			if(rs[i][1] == rsAddressMatch)
+			{
+				rs[i][1] = -1;
+				rs[i][3] = replacementValue;
+			}
+			if(rs[i][2] == rsAddressMatch)
+			{
+				rs[i][2] = -1;
+				rs[i][4] = replacementValue;
+			}
+		}
+		
 		
 	    //Broadcast
 		int location = getEUBroadcast(eu, rs);
 		if(location != -1){
-			rs[location][6] = 0;
+			rs[location][5] = 0;
 		}
 		
 		return rs;
@@ -400,6 +400,32 @@ public class Simulator {
 			}
 		}
 		 return -1;
+	}
+	
+	public int calculate(int[][]eu, int[] rf){
+		
+		int rsLocation = getEUBroadcast(eu, rs);
+		
+		if(rsLocation != -1){
+			if(rs[rsLocation][0] == 2)
+			{
+				return rs[rsLocation][3] * rs[rsLocation][4];
+			}
+			else if (rs[rsLocation][0] == 3)
+			{
+				if(rs[rsLocation][4] != 0){
+					return rs[rsLocation][3] / rs[rsLocation][4];
+				} else {
+					System.out.println("Attempted to divide by zero...");
+				}
+			} else if(rs[rsLocation][0] == 0) {
+				return rs[rsLocation][3] + rs[rsLocation][4];
+			} else if(rs[rsLocation][0] == 1) {
+				return rs[rsLocation][3] - rs[rsLocation][4];
+			}		
+		}
+		
+		return -1;
 	}
 
 	public void Run()
