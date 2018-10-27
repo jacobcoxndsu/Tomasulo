@@ -8,7 +8,7 @@ public class Simulator {
 	//Components
 	private int[] rf;
 	private int[] rat;
-	private int[][] rs; //busy op Vj Vk Qj Qk Dest Disp
+	private int[][] rs; //OP	Qj	Qk	Vj	Vk	Busy
 	private int[][] eu;
 	private InstructionRecord[] iq;
 	
@@ -76,7 +76,7 @@ public class Simulator {
 	
 	private int[][] rs_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
 		rs = rs.clone();
-		//Issue
+	//Issue
 		
 		//Take next inst from IQ
 		int currentRS;
@@ -96,40 +96,40 @@ public class Simulator {
 		while(currentRS <= endOfRS)
 		{
 			//check the busy bit
-			if(rs[currentRS][0] == 0)
+			if(rs[currentRS][5] == 0)
 			{
 				//Take the instruction from IQ - set busy bit
-				rs[currentRS][0] = 1;
+				rs[currentRS][5] = 1;
 				
 				//Determine where inputs come from
 				if(rat[iq[head].sourceOp1] != -1)
 				{
 					//Use the value tag in RS
-					rs[currentRS][3] = rat[iq[head].sourceOp1];
-					rs[currentRS][1] = -1;
+					rs[currentRS][1] = rat[iq[head].sourceOp1];
+					rs[currentRS][3] = -1;
 				}
 				else
 				{
 					//use the value from rf
-					rs[currentRS][1] = rf[iq[head].sourceOp1];
-					rs[currentRS][3] = -1;
+					rs[currentRS][3] = rf[iq[head].sourceOp1];
+					rs[currentRS][1] = -1;
 				}
 				
 				//Do the same for second source
 				if(rat[iq[head].sourceOp2] != -1)
 				{
 					//Use the value tag in RS
-					rs[currentRS][4] = rat[iq[head].sourceOp2];
-					rs[currentRS][2] = -1;
+					rs[currentRS][2] = rat[iq[head].sourceOp2];
+					rs[currentRS][4] = -1;
 				}
 				else
 				{
 					//use the value from rf
-					rs[currentRS][2] = rf[iq[head].sourceOp2];
-					rs[currentRS][4] = -1;
+					rs[currentRS][4] = rf[iq[head].sourceOp2];
+					rs[currentRS][2] = -1;
 				}
 				//set the destination register
-				rs[currentRS][5] = iq[head].destOp;
+				rs[currentRS][6] = iq[head].destOp;
 
 				break;
 
