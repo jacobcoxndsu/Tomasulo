@@ -7,7 +7,7 @@ public class Simulator {
 	//Components
 	private int[] rf;
 	private int[] rat;
-	private int[][] rs;
+	private int[][] rs; //busy op Vj Vk Qj Qk Dest Disp
 	private int[][] eu;
 	private InstructionRecord[] iq;
 	
@@ -151,6 +151,10 @@ public class Simulator {
 		
 		PrintReservationStation();
 		
+		System.out.println();
+		
+		PrintRFandRAT();
+		
 	}
 	
 	public void PrintReservationStation(){
@@ -181,6 +185,23 @@ public class Simulator {
 		System.out.println("--Instruction Queue--");
 		for(int i = 0; i < iq.length; i++){
 			System.out.println(" " + iq[i]);
+		}
+	}
+	
+	public void PrintRFandRAT(){
+		System.out.println(" --RF--       --RAT--");
+		
+		for(int i = 0; i < rf.length; i++){
+			System.out.print(i + ":    " + rf[i]);
+			if(rat[i] != -1){
+				if(rf[i] > 9){
+					System.out.print("        RS" + rat[i]);
+				} else {
+					System.out.print("         RS" + rat[i]);
+				}
+			}
+			
+			System.out.println();
 		}
 	}
 
