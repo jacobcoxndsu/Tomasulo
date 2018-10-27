@@ -178,7 +178,23 @@ public class Simulator {
 			}			
 		}
 		
+		//Dispatch
+		int rsAddressMatch = getEUBroadcast(eu,rs);
+		int replacementValue = calculate(eu,rf);
 		
+		for(int i = 0; i < rs.length; i++)
+		{
+			if(rs[i][1] == rsAddressMatch)
+			{
+				rs[i][1] = -1;
+				rs[i][3] = replacementValue;
+			}
+			if(rs[i][2] == rsAddressMatch)
+			{
+				rs[i][2] = -1;
+				rs[i][4] = replacementValue;
+			}
+		}
 		
 		
 	    //Broadcast
