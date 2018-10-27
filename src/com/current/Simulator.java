@@ -130,7 +130,7 @@ public class Simulator {
 				}
 				//set the destination register
 				rs[currentRS][5] = iq[head].destOp;
-				
+				break;
 			}
 			else
 			{
@@ -272,6 +272,8 @@ public class Simulator {
 			System.out.println();
 		}
 	}
+	
+	//public int get
 
 	public void Run()
 	{
@@ -292,7 +294,7 @@ public class Simulator {
 			iq = tempIq;
 			
 			//Print results
-			//Print();
+			Print();
 			
 			//Increments Cycle
 			cycle++;
