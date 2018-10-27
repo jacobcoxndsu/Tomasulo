@@ -3,6 +3,7 @@ public class Simulator {
 
 	private int cycle = 0;
 	private int numCycles;
+	private int head;
 	
 	//Components
 	private int[] rf;
@@ -110,13 +111,12 @@ public class Simulator {
 		return rs;
 	}
 	
-	private int[][] ud_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
+	private int[][] eu_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
 		//Issue
 		
 		//Dispatch
 		
 		//Broadcast
-		
 		if(eu[1][1] == 0)//mult/div is ready
 		{
 			
@@ -150,8 +150,17 @@ public class Simulator {
 	
 	private InstructionRecord[] iq_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
 		//Issue
+
+		boolean canIssue = false;
+		int tempOpcode = iq[head].opcode;
 		
+		//if()
 		
+		for(int i = 0; i < rs.length; i++){
+			for(int j = 0; j < rs[i].length; i++){
+				
+			}
+		}
 		
 		//Dispatch
 		
@@ -230,7 +239,7 @@ public class Simulator {
 			int[] tempRf = rf_step(rf, rat, rs, eu, iq);
 			int[] tempRat = rat_step(rf, rat, rs, eu, iq);
 			int[][] tempRs = rs_step(rf, rat, rs, eu, iq);
-			int[][] tempEu = ud_step(rf, rat, rs, eu, iq);
+			int[][] tempEu = eu_step(rf, rat, rs, eu, iq);
 			InstructionRecord[] tempIq = iq_step(rf, rat, rs, eu, iq);
 			
 			//Components remade
