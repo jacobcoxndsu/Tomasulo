@@ -33,7 +33,7 @@ public class Simulator {
 			rat[i] = -1;
 		}
 		//Create rs
-		rs = new int[5][8];
+		rs = new int[5][7];
 		for(int i = 0; i < rs.length; i++){
 			rs[i][1] = -1;
 			rs[i][2] = -1;
@@ -69,8 +69,13 @@ public class Simulator {
 		//Broadcast
 			//Update the RAT
 		int rsLocation = getEUBroadcast(eu, rs);
-		if(rsLocation != -1)
-			rf[rs[rsLocation][6]] = calculate(eu, rf);
+		if(rsLocation != -1){
+			int temp = calculate(eu, rf, rs);
+			if(temp != -2){
+				rf[rs[rsLocation][6]] = calculate(eu, rf, rs);
+			}
+		}
+			
 
 		return rf;
 	}
@@ -99,11 +104,13 @@ public class Simulator {
 				}
 			}
 			
-			//Broadcast
-			int location = getEUBroadcast(eu, rs);
-			if(location != -1)
-				rat[rs[location][6]] = -1;
+			
 		} 
+		
+		//Broadcast
+		int location = getEUBroadcast(eu, rs);
+		if(location != -1)
+			rat[rs[location][6]] = -1;
 		
 		return rat;
 	}
@@ -168,6 +175,7 @@ public class Simulator {
 					//set the destination register
 					rs[currentRS][6] = iq[head].destOp;
 
+					head++;
 					break;
 
 				}
@@ -181,9 +189,9 @@ public class Simulator {
 		
 		//Dispatch
 		int rsAddressMatch = getEUBroadcast(eu,rs);
-		int replacementValue = calculate(eu,rf);
+		int replacementValue = calculate(eu,rf, rs);
 		
-		if(rsAddressMatch != -1){
+		if(rsAddressMatch != -1 && replacementValue != -1){
 			for(int i = 0; i < rs.length; i++)
 			{
 				if(rs[i][1] == rsAddressMatch)
@@ -205,7 +213,13 @@ public class Simulator {
 	    //Broadcast
 		int location = getEUBroadcast(eu, rs);
 		if(location != -1){
+			rs[location][0] = 0;
+			rs[location][1] = -1;
+			rs[location][2] = -1;
+			rs[location][3] = -1;
+			rs[location][4] = -1;
 			rs[location][5] = 0;
+			rs[location][6] = 0;
 		}
 		
 		return rs;
@@ -257,6 +271,7 @@ public class Simulator {
 		rs = rs.clone();
 		iq = iq.clone();
 
+		/*
 		boolean canIssue = false;
 		if(head < iq.length){
 			int tempOpcode = iq[head].opcode;
@@ -274,15 +289,9 @@ public class Simulator {
 					}
 				}
 			}
-		}
+		}*/
 		
-		
-		if(canIssue){
-			if(head < iq.length){
-				head++;
-			}
-		}
-		
+			
 		return iq;
 	}
 	
@@ -307,10 +316,10 @@ public class Simulator {
 	//op qj qk vj vk busy dest disp
 	public void PrintReservationStation(){
 		System.out.println("                                  --ReservationStation--");
-		String[] info1 = {"          ","Op", "Qj", "Qk", "Vj", "Vk", "Busy", "Dest", "Disp"};
+		String[] info1 = {"          ","Op", "Qj", "Qk", "Vj", "Vk", "Busy", "Dest"};
 		
-		System.out.format("%-11s%-11s%-11s%-11s%-11s%-11s%-11s%-11s%-11s\n", info1);
-		System.out.println("--------------------------------------------------------------------------------------------");
+		System.out.format("%-11s%-11s%-11s%-11s%-11s%-11s%-11s%-11s\n", info1);
+		System.out.println("---------------------------------------------------------------------------------");
 		
 		for(int i = 0; i < rs.length; i++){
 			String[] info2 = new String[9];
@@ -322,9 +331,8 @@ public class Simulator {
 			info2[5] = String.valueOf(rs[i][4]);
 			info2[6] = String.valueOf(rs[i][5]);
 			info2[7] = String.valueOf(rs[i][6]);
-			info2[8] = String.valueOf(rs[i][7]);
 			
-			System.out.format("%-11s%-11s%-11s%-11s%-11s%-11s%-11s%-11s%-11s\n", info2);
+			System.out.format("%-11s%-11s%-11s%-11s%-11s%-11s%-11s%-11s\n", info2);
 		}
 
 	}
@@ -365,7 +373,7 @@ public class Simulator {
 					if(cc > 10){
 						return location;
 					}
-				} else if(type == 2){
+				} else if(type == 3){
 					if(cc > 40){
 						return location;
 					}
@@ -407,7 +415,7 @@ public class Simulator {
 		 return -1;
 	}
 	
-	public int calculate(int[][]eu, int[] rf){
+	public int calculate(int[][]eu, int[] rf, int[][] rs){
 		
 		int rsLocation = getEUBroadcast(eu, rs);
 		
