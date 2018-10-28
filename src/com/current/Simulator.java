@@ -69,7 +69,8 @@ public class Simulator {
 		//Broadcast
 			//Update the RAT
 		int rsLocation = getEUBroadcast(eu, rs);
-		rf[rs[rsLocation][6]] = calculate(eu, rf);
+		if(rsLocation != -1)
+			rf[rs[rsLocation][6]] = calculate(eu, rf);
 
 		return rf;
 	}
@@ -182,19 +183,23 @@ public class Simulator {
 		int rsAddressMatch = getEUBroadcast(eu,rs);
 		int replacementValue = calculate(eu,rf);
 		
-		for(int i = 0; i < rs.length; i++)
-		{
-			if(rs[i][1] == rsAddressMatch)
+		if(rsAddressMatch != -1){
+			for(int i = 0; i < rs.length; i++)
 			{
-				rs[i][1] = -1;
-				rs[i][3] = replacementValue;
-			}
-			if(rs[i][2] == rsAddressMatch)
-			{
-				rs[i][2] = -1;
-				rs[i][4] = replacementValue;
+				if(rs[i][1] == rsAddressMatch)
+				{
+					rs[i][1] = -1;
+					rs[i][3] = replacementValue;
+				}
+				if(rs[i][2] == rsAddressMatch)
+				{
+					rs[i][2] = -1;
+					rs[i][4] = replacementValue;
+				}
 			}
 		}
+		
+		
 		
 		
 	    //Broadcast
