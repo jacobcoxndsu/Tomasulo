@@ -11,6 +11,9 @@ public class Simulator {
 	private int[][] rs; //op qj qk vj vk busy dest disp
 	private int[][] eu;
 	private InstructionRecord[] iq;
+	private int[] rob;
+	private int issuePointer;
+	private int commitPointer;
 	
 	//Structures
 
@@ -55,6 +58,16 @@ public class Simulator {
 			InstructionRecord inst = new InstructionRecord(opcode, destOp, sourceOp1, sourceOp2);
 			iq[i] = inst;
 		}
+		
+		//Create ROB
+		for(int i = 1; i <= 6; i++){
+			rob[i] = i;
+		}
+		
+		//Create pointers
+		issuePointer = 0;
+		commitPointer = 0;
+		
 		
 		//Finished creating now step
 		Run();
@@ -264,6 +277,11 @@ public class Simulator {
 		}
 		
 		return eu;
+	}
+	
+	private int[] rob_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq, int[] rob){
+		//Do rob things here...
+		return rob;
 	}
 	
 	private InstructionRecord[] iq_step(int[][] rs, InstructionRecord[] iq){
