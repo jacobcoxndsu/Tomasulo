@@ -11,7 +11,7 @@ public class Simulator {
 	private int[][] rs; //op qj qk vj vk busy dest disp
 	private int[][] eu;
 	private InstructionRecord[] iq;
-	private int[] rob;
+	private int[][] rob;
 	private int issuePointer;
 	private int commitPointer;
 	
@@ -61,7 +61,10 @@ public class Simulator {
 		
 		//Create ROB
 		for(int i = 1; i <= 6; i++){
-			rob[i] = i;
+			rob[i][0] = i; //REG
+			rob[i][1] = 0; //VAL
+			rob[i][2] = 0; //DONE
+			rob[i][3] = 0; //Exception
 		}
 		
 		//Create pointers
@@ -93,7 +96,7 @@ public class Simulator {
 		return rf;
 	}
 	
-	private int[] rat_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
+	private int[] rat_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq, int[][] rob){
 		rat = rat.clone();
 		//Issue
 		if(head < iq.length){
@@ -103,7 +106,7 @@ public class Simulator {
 			
 			if(opcode == 0 || opcode == 1){ //Add/Subtract
 				for(int i = 0; i < 3; i++){
-					if(rs[i][5] == 0){
+					if(rob[i][5] == 0){ // changed to ROB rom rs
 						rat[destination] = i;
 					}
 				}
@@ -111,7 +114,7 @@ public class Simulator {
 			
 			if(opcode == 2 || opcode == 3){ //Multiply/Divide
 				for(int i = 3; i < rs.length; i++){
-					if(rs[i][5] == 0){
+					if(rob[i][5] == 0){ //changed to ROB from rs
 						rat[destination] = i;
 					}
 				}
@@ -128,7 +131,7 @@ public class Simulator {
 		return rat;
 	}
 	
-	private int[][] rs_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
+	private int[][] rs_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq, int[][] rob){
 		rs = rs.clone();
 	    //Issue
 		
@@ -159,7 +162,7 @@ public class Simulator {
 					rs[currentRS][5] = 1;
 					
 					//Determine where inputs come from
-					if(rat[iq[head].sourceOp1] != -1)
+					if(rob[iq[head].sourceOp1][0] != -1) //changed from rat
 					{
 						//Use the value tag in RS
 						rs[currentRS][1] = rat[iq[head].sourceOp1];
@@ -173,7 +176,7 @@ public class Simulator {
 					}
 					
 					//Do the same for second source
-					if(rat[iq[head].sourceOp2] != -1)
+					if(rob[iq[head].sourceOp2][0] != -1) //changed from rat
 					{
 						//Use the value tag in RS
 						rs[currentRS][2] = rat[iq[head].sourceOp2];
@@ -279,7 +282,8 @@ public class Simulator {
 		return eu;
 	}
 	
-	private int[] rob_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq, int[] rob){
+	private int[][] rob_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq, int[][] rob){
+		rob = rob.clone();
 		//Do rob things here...
 		return rob;
 	}
@@ -468,8 +472,8 @@ public class Simulator {
 			
 			//Components Step
 			int[] tempRf = rf_step(rf, rat, rs, eu, iq);
-			int[] tempRat = rat_step(rf, rat, rs, eu, iq);
-			int[][] tempRs = rs_step(rf, rat, rs, eu, iq);
+			int[] tempRat = rat_step(rf, rat, rs, eu, iq, rob);
+			int[][] tempRs = rs_step(rf, rat, rs, eu, iq, rob);
 			int[][] tempEu = eu_step(rf, rat, rs, eu, iq);
 			InstructionRecord[] tempIq = iq_step(rs, iq);
 			
