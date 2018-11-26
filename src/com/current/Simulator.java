@@ -123,10 +123,13 @@ public class Simulator {
 			
 		} 
 		
-		//Broadcast
-		int location = getEUBroadcast(eu, rs);
-		if(location != -1)
-			rat[rs[location][6]] = -1;
+		//Commit
+		 //need the row of the rob (commit pointer)
+		if(rob[commitPointer][1] != -1)//When we are ready to commit - if it has broadcasted and commitPointer
+		{
+			rat[rob[commitPointer][0]] = -1;
+			commitPointer++;
+		}
 		
 		return rat;
 	}
