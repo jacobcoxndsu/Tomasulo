@@ -282,6 +282,9 @@ public class Simulator {
 			eu[1][1]++;
 		}
 		
+		//commit
+		
+		
 		return eu;
 	}
 	
