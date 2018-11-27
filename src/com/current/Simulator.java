@@ -99,28 +99,9 @@ public class Simulator {
 	private int[] rat_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq, int[][] rob){
 		rat = rat.clone();
 		//Issue
-		if(head < iq.length){
-			
-			int destination = iq[head].destOp;
-			int opcode = iq[head].opcode;
-			
-			if(opcode == 0 || opcode == 1){ //Add/Subtract
-				for(int i = 0; i < 3; i++){
-					if(rob[i][5] == 0){ // changed to ROB rom rs
-						rat[destination] = i;
-					}
-				}
-			}
-			
-			if(opcode == 2 || opcode == 3){ //Multiply/Divide
-				for(int i = 3; i < rs.length; i++){
-					if(rob[i][5] == 0){ //changed to ROB from rs
-						rat[destination] = i;
-					}
-				}
-			}
-			
-			
+		if(head < iq.length)
+		{	
+			rat[rob[issuePointer][0]] = issuePointer;
 		} 
 		
 		//Commit
