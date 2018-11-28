@@ -44,9 +44,14 @@ public class Simulator {
 			rs[i][4] = -1;
 		}
 		//Create ud
-		eu = new int[2][2];
-		eu[0][0] = -1;
-		eu[1][0] = -1;
+		eu = new int[2][3];
+		for(int i = 0; i < eu.length; i++)
+		{
+			eu[i][0] = -1;//val1
+			eu[i][1] = -1;//val2
+			eu[i][2] = -1;//rob tag
+		}
+		
 		//Fill in Instructions
 		iq = new InstructionRecord[ir.length];
 		for (int i = 0; i < ir.length; i++)
@@ -60,10 +65,11 @@ public class Simulator {
 		}
 		
 		//Create ROB
+		rob = new int[7][4];
 		for(int i = 1; i <= 6; i++){
-			rob[i][0] = i; //REG
+			rob[i][0] = 0; //REG
 			rob[i][1] = 0; //VAL
-			rob[i][2] = 0; //Busy
+			rob[i][2] = 0; //Done
 			rob[i][3] = 0; //Exception
 		}
 		
@@ -231,6 +237,7 @@ public class Simulator {
 		eu = eu.clone();
 		//Issue
 		
+		//What is this doing?
 		//Dispatch
 		for(int i = 0; i < 3; i++){
 			if(rs[i][3] != -1 && rs[i][4] != -1){
@@ -251,7 +258,7 @@ public class Simulator {
 		}
 		
 		
-		//Check if they are done...
+		//Check if they are done... Check if it is done executing?
 		int locationInEU = getEUBroadcastInEU(eu, rs);
 		if(locationInEU != -1){
 			eu[locationInEU][1] = -1;
@@ -273,7 +280,33 @@ public class Simulator {
 	
 	private int[][] rob_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq, int[][] rob){
 		rob = rob.clone();
-		//Do rob things here...
+		//Issue - put instruction into the ROB if available
+		if(head < iq.length && (getFreeRob(rob) != -1))
+		{
+			rob[issuePointer][0] = iq[head].destOp;
+			return rob;
+		}
+		
+		//Broadcast - capture the result into ROB, set DONE
+		int euLocation = getEUBroadcast(eu,rs);
+		int robLocation = eu[euLocation][2];
+		if(euLocation != -1)//ready to receive a broadcast
+		{
+			//go to entry of rob with dst tag
+			rob[robLocation][1] = calculate(eu,rf,rs);
+			rob[robLocation][2] = 1; //Done
+			return rob;//Exit before the commit
+		}
+		
+		//Commit - clear ROB entry
+		if((commitPointer == robLocation) && rob[robLocation][2] == 1) 
+		{
+			for(int j = 0; j < 4; j++)
+			{
+				rob[robLocation][j] = -1;
+			}
+			commitPointer++;
+		}
 		return rob;
 	}
 	
@@ -406,17 +439,28 @@ public class Simulator {
 			int location = eu[i][0];
 			
 			if(location != -1){
-				int type = rs[location][0];
+				int operationType = rs[location][0];
 				
-				if(type == 2){
+				/*switch(operationType)
+				{
+					case 0:
+					case 1:
+						if(cc > 2)
+						{
+							return i;
+						}
+					case 2:
+					case 3:
+				}*/
+				if(operationType == 2){
 					if(cc > 10){
 						return i;
 					}
-				} else if(type == 2){
+				} else if(operationType == 3){
 					if(cc > 40){
 						return i;
 					}
-				} else if(type == 0 || type == 1){
+				} else if(operationType == 0 || operationType == 1){
 					if(cc > 2){
 						return i;
 					}
@@ -428,23 +472,35 @@ public class Simulator {
 	
 	public int calculate(int[][]eu, int[] rf, int[][] rs){
 		
+		//Check if EU is ready to broadcast
 		int rsLocation = getEUBroadcast(eu, rs);
 		
+		//The EU is ready
 		if(rsLocation != -1){
+			//Multiply
 			if(rs[rsLocation][0] == 2)
 			{
 				return rs[rsLocation][3] * rs[rsLocation][4];
 			}
+			//Divide
 			else if (rs[rsLocation][0] == 3)
 			{
+				//THIS IS THE EXCEPTION
 				if(rs[rsLocation][4] != 0){
 					return rs[rsLocation][3] / rs[rsLocation][4];
 				} else {
+					//Change to an exception handling flag
 					System.out.println("Attempted to divide by zero...");
 				}
-			} else if(rs[rsLocation][0] == 0) {
+			}
+			//Add
+			else if(rs[rsLocation][0] == 0) 
+			{
 				return rs[rsLocation][3] + rs[rsLocation][4];
-			} else if(rs[rsLocation][0] == 1) {
+			} 
+			//Subtract
+			else if(rs[rsLocation][0] == 1) 
+			{
 				return rs[rsLocation][3] - rs[rsLocation][4];
 			}		
 		}
@@ -488,7 +544,7 @@ public class Simulator {
 	public int getFreeRob(int[][] rob)
 	{
 		//issue pointer is at free ROB entry
-		if(rob[issuePointer][2] != 1)
+		if(rob[issuePointer][0] == -1)
 		{
 			return issuePointer;
 		}
@@ -507,7 +563,7 @@ public class Simulator {
 	{
 		for(int robEntry = 1; robEntry < rob.length; robEntry++)
 		{
-			if(rob[robEntry][2] != 1)
+			if(rob[robEntry][0] == -1)//ROB entry is open
 			{
 				issuePointer = robEntry;
 				return true;
