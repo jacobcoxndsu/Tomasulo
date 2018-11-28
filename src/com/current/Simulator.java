@@ -63,7 +63,7 @@ public class Simulator {
 		for(int i = 1; i <= 6; i++){
 			rob[i][0] = i; //REG
 			rob[i][1] = 0; //VAL
-			rob[i][2] = 0; //DONE
+			rob[i][2] = 0; //Busy
 			rob[i][3] = 0; //Exception
 		}
 		
@@ -119,7 +119,8 @@ public class Simulator {
 		rs = rs.clone();
 	    //Issue
 		
-		if(head < iq.length){
+		//Instruction in the queue, ROB is ready, RS is empty
+		if(head < iq.length && (getFreeRob(rob) != -1)){
 			//Take next inst from IQ
 			int currentRS;
 			int endOfRS;
@@ -172,8 +173,8 @@ public class Simulator {
 						rs[currentRS][4] = rf[iq[head].sourceOp2];
 						rs[currentRS][2] = -1;
 					}
-					//set the destination register
-					rs[currentRS][6] = iq[head].destOp;
+					//set the destination ROB Tag
+					rs[currentRS][6] = issuePointer;
 
 					head++;
 					break;
@@ -188,7 +189,7 @@ public class Simulator {
 		}
 		
 		//Dispatch
-		int rsAddressMatch = getEUBroadcast(eu,rs);
+		/*int rsAddressMatch = getEUBroadcast(eu,rs);
 		int replacementValue = calculate(eu,rf, rs);
 		
 		if(rsAddressMatch != -1 && replacementValue != -1){
@@ -205,14 +206,15 @@ public class Simulator {
 					rs[i][4] = replacementValue;
 				}
 			}
-		}
+		}*/
 		
 		
 		
 		
-	    //Broadcast
-		int location = getEUBroadcast(eu, rs);
-		if(location != -1){
+	    //Dispatch - free the RS
+		int location = 0;//which RS entries are supposed to be freed?
+		if((rs[location][3] != -1) && (rs[location][4] != -1))//if the values are ready
+		{
 			rs[location][0] = 0;
 			rs[location][1] = -1;
 			rs[location][2] = -1;
@@ -478,5 +480,38 @@ public class Simulator {
 		Print();
 	
 		//System.out.println("Finished");
+	}
+	
+	public int getFreeRob(int[][] rob)
+	{
+		//issue pointer is at free ROB entry
+		if(rob[issuePointer][2] != 1)
+		{
+			return issuePointer;
+		}
+		//issue pointer is moved to next free 
+		boolean robIsFree =  moveRobIssuePointerToFree(rob);
+		//there isn't a free one - send -1
+		if(!robIsFree)
+		{
+			return -1;
+		}
+		return issuePointer;
+	
+	}
+	
+	public boolean moveRobIssuePointerToFree(int[][] rob)
+	{
+		for(int robEntry = 1; robEntry < rob.length; robEntry++)
+		{
+			if(rob[robEntry][2] != 1)
+			{
+				issuePointer = robEntry;
+				return true;
+			}
+		}
+		
+		return false;
+		
 	}
 }
