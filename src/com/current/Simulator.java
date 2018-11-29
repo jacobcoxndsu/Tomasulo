@@ -17,7 +17,7 @@ public class Simulator {
 	
 	//Structures
 
-
+	//DOUBLE CHECK
 	public Simulator(int cy, int ns, String[] ir, String[] rg)
 	{
 		//Create cycles
@@ -36,20 +36,29 @@ public class Simulator {
 			rat[i] = -1;
 		}
 		//Create rs
-		rs = new int[5][7];
+		rs = new int[5][8];
 		for(int i = 0; i < rs.length; i++){
-			rs[i][1] = -1;
-			rs[i][2] = -1;
-			rs[i][3] = -1;
-			rs[i][4] = -1;
+			rs[i][0] = -1;//op
+			rs[i][1] = -1;// rob tag 1
+			rs[i][2] = -1;// rob tag 2
+			rs[i][3] = -1;// value 1
+			rs[i][4] = -1;//value 2
+			rs[i][5] = -1;// busy flag
+			rs[i][6] = -1;//dest rob tag
+			rs[i][7] = -1;//dispatch ready tag
+	
 		}
 		//Create ud
-		eu = new int[2][3];
+		eu = new int[2][7];
 		for(int i = 0; i < eu.length; i++)
 		{
-			eu[i][0] = -1;//val1
-			eu[i][1] = -1;//val2
-			eu[i][2] = -1;//rob tag
+			eu[i][0] = -1;//op
+			eu[i][1] = -1;//rob tag
+			eu[i][2] = -1;//val1
+			eu[i][3] = -1;//val2
+			eu[i][4] = -1;//number of cc
+			eu[i][5] = -1;//Broadcast flag
+			eu[i][6] = -1;//Exception flag
 		}
 		
 		//Fill in Instructions
@@ -82,19 +91,20 @@ public class Simulator {
 		Run();
 	}
 	
-	private int[] rf_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
+	//NEED TO UPDATE
+	private int[] rf_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq, int[][] rob){
 		rf = rf.clone();
 		//Issue
 		
 		//Dispatch
 		
 		//Broadcast
-			//Update the RAT
+			
 		int rsLocation = getEUBroadcast(eu, rs);
 		if(rsLocation != -1){
-			int temp = calculate(eu, rf, rs);
+			int temp = calculate(eu, rs);
 			if(temp != -2){
-				rf[rs[rsLocation][6]] = calculate(eu, rf, rs);
+				rf[rs[rsLocation][6]] = calculate(eu, rs);
 			}
 		}
 			
@@ -102,6 +112,7 @@ public class Simulator {
 		return rf;
 	}
 	
+	//DONE
 	private int[] rat_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq, int[][] rob){
 		rat = rat.clone();
 		//Issue
@@ -120,7 +131,7 @@ public class Simulator {
 		
 		return rat;
 	}
-	
+	//DONE
 	private int[][] rs_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq, int[][] rob){
 		rs = rs.clone();
 	    //Issue
@@ -194,45 +205,32 @@ public class Simulator {
 			}			
 		}
 		
-		//Dispatch
-		/*int rsAddressMatch = getEUBroadcast(eu,rs);
-		int replacementValue = calculate(eu,rf, rs);
-		
-		if(rsAddressMatch != -1 && replacementValue != -1){
-			for(int i = 0; i < rs.length; i++)
-			{
-				if(rs[i][1] == rsAddressMatch)
-				{
-					rs[i][1] = -1;
-					rs[i][3] = replacementValue;
-				}
-				if(rs[i][2] == rsAddressMatch)
-				{
-					rs[i][2] = -1;
-					rs[i][4] = replacementValue;
-				}
-			}
-		}*/
-		
-		
-		
-		
 	    //Dispatch - free the RS
-		int location = 0;//which RS entries are supposed to be freed?
-		if((rs[location][3] != -1) && (rs[location][4] != -1))//if the values are ready
+		//Set the dispatch flags
+		for(int rsRow = 0; rsRow < rs.length; rsRow++)
 		{
-			rs[location][0] = 0;
-			rs[location][1] = -1;
-			rs[location][2] = -1;
-			rs[location][3] = -1;
-			rs[location][4] = -1;
-			rs[location][5] = 0;
-			rs[location][6] = 0;
+			if(rsDispatchReady(rs, rsRow))
+			{
+				rs[rsRow][7] = 1;
+			}
+		}
+		//Find the next one that will be dispatched
+		int rsLocation = getNextRSDispatch(rs);//which RS entries are supposed to be freed?
+		int euLocation = getFreeEU(eu,rs);
+		if((rsLocation != -1) && (euLocation != -1))//if the values are ready
+		{
+			rs[rsLocation][0] = -1;
+			rs[rsLocation][1] = -1;
+			rs[rsLocation][2] = -1;
+			rs[rsLocation][3] = -1;
+			rs[rsLocation][4] = -1;
+			rs[rsLocation][5] = -1;
+			rs[rsLocation][6] = -1;
 		}
 		
 		return rs;
 	}
-	
+	//NEED TO UPDATE
 	private int[][] eu_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
 		eu = eu.clone();
 		//Issue
@@ -259,7 +257,7 @@ public class Simulator {
 		
 		
 		//Check if they are done... Check if it is done executing?
-		int locationInEU = getEUBroadcastInEU(eu, rs);
+		int locationInEU = getEUBroadcastInEU(eu);
 		if(locationInEU != -1){
 			eu[locationInEU][1] = -1;
 		}
@@ -277,7 +275,7 @@ public class Simulator {
 		
 		return eu;
 	}
-	
+	//DONE - Please double check
 	private int[][] rob_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq, int[][] rob){
 		rob = rob.clone();
 		//Issue - put instruction into the ROB if available
@@ -293,7 +291,7 @@ public class Simulator {
 		if(euLocation != -1)//ready to receive a broadcast
 		{
 			//go to entry of rob with dst tag
-			rob[robLocation][1] = calculate(eu,rf,rs);
+			rob[robLocation][1] = calculate(eu,rs);
 			rob[robLocation][2] = 1; //Done
 			return rob;//Exit before the commit
 		}
@@ -310,35 +308,16 @@ public class Simulator {
 		return rob;
 	}
 	
+	//DONE
 	private InstructionRecord[] iq_step(int[][] rs, InstructionRecord[] iq){
 		//get temp variables
 		rs = rs.clone();
 		iq = iq.clone();
-
-		/*
-		boolean canIssue = false;
-		if(head < iq.length){
-			int tempOpcode = iq[head].opcode;
-			
-			if(tempOpcode == 0 || tempOpcode == 1){
-				for(int i = 0; i < rs.length - 2; i++){
-					if(rs[i][0] != 1){
-						canIssue = true;
-					}
-				}
-			} else if(tempOpcode == 2 || tempOpcode == 3){
-				for(int i = 2; i < rs.length; i++){
-					if(rs[i][0] != 1){
-						canIssue = true;
-					}
-				}
-			}
-		}*/
-		
 			
 		return iq;
 	}
 	
+	//NEED TO UPDATE
 	public void Print(){
 		
 		System.out.println("\n\n\n");
@@ -405,6 +384,7 @@ public class Simulator {
 		}
 	}
 	
+	//NEED TO UPDATE
 	public int getEUBroadcast(int[][] eu, int[][] rs){
 		//Check Multiply/Divide first
 		for(int i = 0; i < 2; i++){
@@ -432,14 +412,15 @@ public class Simulator {
 		 return -1;
 	}
 	
-	public int getEUBroadcastInEU(int[][] eu, int[][] rs){
+	//NEED TO UPDATE
+	public int getEUBroadcastInEU(int[][] eu){
 		//Check Multiply/Divide first
 		for(int i = 0; i < 2; i++){
 			int cc = eu[i][1];
-			int location = eu[i][0];
+			int location = eu[i][2];
 			
 			if(location != -1){
-				int operationType = rs[location][0];
+				int operationType = eu[location][3];
 				
 				/*switch(operationType)
 				{
@@ -470,10 +451,11 @@ public class Simulator {
 		 return -1;
 	}
 	
-	public int calculate(int[][]eu, int[] rf, int[][] rs){
+	//NEED TO UPDATE - depends on getEUBroadcastInEU
+	public int calculate(int[][]eu, int[][] rs){
 		
 		//Check if EU is ready to broadcast
-		int rsLocation = getEUBroadcast(eu, rs);
+		int rsLocation = getEUBroadcastInEU(eu);
 		
 		//The EU is ready
 		if(rsLocation != -1){
@@ -508,6 +490,7 @@ public class Simulator {
 		return -1;
 	}
 
+	//DONE
 	public void Run()
 	{
 		PrintInstructionQueue();
@@ -516,10 +499,11 @@ public class Simulator {
 		while(cycle < numCycles){
 			
 			//Components Step
-			int[] tempRf = rf_step(rf, rat, rs, eu, iq);
+			int[] tempRf = rf_step(rf, rat, rs, eu, iq, rob);
 			int[] tempRat = rat_step(rf, rat, rs, eu, iq, rob);
 			int[][] tempRs = rs_step(rf, rat, rs, eu, iq, rob);
 			int[][] tempEu = eu_step(rf, rat, rs, eu, iq);
+			int[][] tempRob = rob_step(rf, rat, rs, eu, iq, rob);
 			InstructionRecord[] tempIq = iq_step(rs, iq);
 			
 			//Components remade
@@ -528,6 +512,7 @@ public class Simulator {
 			rs = tempRs;
 			eu = tempEu;
 			iq = tempIq;
+			rob = tempRob;
 			
 			//Print results
 			Print();
@@ -540,7 +525,30 @@ public class Simulator {
 	
 		//System.out.println("Finished");
 	}
+	//DONE
+	public boolean rsDispatchReady(int[][] rs, int rsEntry)
+	{
+		if((rs[rsEntry][3] != -1) && (rs[rsEntry][4] != -1))
+		{
+			return true;
+		}
+		
+		return false;
+	}
 	
+	//DONE
+	public int getNextRSDispatch(int[][] rs)
+	{
+		for(int rsRow = 0; rsRow < rs.length; rsRow++)
+		{
+			if(rs[rsRow][7] == 1)
+			{
+				return rsRow;
+			}
+		}
+		return -1;
+	}
+	//DONE
 	public int getFreeRob(int[][] rob)
 	{
 		//issue pointer is at free ROB entry
@@ -558,7 +566,7 @@ public class Simulator {
 		return issuePointer;
 	
 	}
-	
+	//DONE
 	public boolean moveRobIssuePointerToFree(int[][] rob)
 	{
 		for(int robEntry = 1; robEntry < rob.length; robEntry++)
@@ -571,6 +579,16 @@ public class Simulator {
 		}
 		
 		return false;
+		
+	}
+	//NEED TO WRITE
+	public boolean divideException(int[][] eu)
+	{
+		
+	}
+	//NEED TO WRITE
+	public int getFreeEU(int[][]eu, int [][] rs)
+	{
 		
 	}
 }
