@@ -286,18 +286,25 @@ public class Simulator {
 		}
 
 		
-		
+		//Broadcast
+		//Check the broadcast flag
+		//Clear the first entry found (and only the first one)
 		
 
 		
 		//Executing
-			//Check if cycles equal 0 
+			//Check if cycles equal 1 
 			//Set the broadcast flag (make a function)
+		for(int euRows = 0; euRows < eu.length; euRows++)	
+		{
+			if(eu[euRows][4] == 1)
+			{
+				eu[euRows][5] = 1;
+			}
 			//decrement the cc for each 
-		
-		//Broadcast
-			//Check the broadcast flag
-			//Clear the first entry found (and only the first one)
+			eu[euRows][4]--;
+		}
+			
 			
 		
 		
