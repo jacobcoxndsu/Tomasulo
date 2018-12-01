@@ -1,4 +1,7 @@
 package com.current;
+
+import java.util.Scanner;
+
 public class Simulator {
 
 	private int cycle = 0;
@@ -299,7 +302,7 @@ public class Simulator {
 		{
 			int robLocation = eu[euLocation][2];
 			//go to entry of rob with dst tag
-			rob[robLocation][1] = calculate(eu,rs);//Value
+			rob[robLocation][1] = calculate(eu);//Value
 			rob[robLocation][2] = 1; //Done
 			rob[robLocation][3] = eu[euLocation][6];//Exception
 			return rob;//Exit before the commit
@@ -552,6 +555,11 @@ public class Simulator {
 		Print();
 	
 		//System.out.println("Finished");
+		
+		System.out.println("\nPress Enter Close: ");
+		Scanner in = new Scanner(System.in);
+		String temp = in.nextLine();		
+		
 	}
 	//DONE
 	public boolean rsDispatchReady(int[][] rs, int rsEntry)
