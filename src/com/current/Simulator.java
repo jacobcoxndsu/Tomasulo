@@ -302,7 +302,7 @@ public class Simulator {
 		{
 			int robLocation = eu[euLocation][2];
 			//go to entry of rob with dst tag
-			rob[robLocation][1] = calculate(eu);//Value
+			rob[robLocation][1] = calculate(eu,rs);//Value
 			rob[robLocation][2] = 1; //Done
 			rob[robLocation][3] = eu[euLocation][6];//Exception
 			return rob;//Exit before the commit
