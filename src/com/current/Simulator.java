@@ -231,7 +231,7 @@ public class Simulator {
 		return rs;
 	}
 	
-	private void setEU(int[][] eu, int[][] rs, int location, int euLocation) {
+	private int[][] setEU(int[][] eu, int[][] rs, int location, int euLocation) {
 		eu[euLocation][0] = rs[location][0]; // rs pcode -> eu opcode
 		eu[euLocation][1] = rs[location][6]; // rs destination -> eu robtag
 		eu[euLocation][2] = rs[location][3]; // rs Vj -> eu Val1
@@ -250,6 +250,8 @@ public class Simulator {
 		
 		eu[euLocation][5] = -1;
 		eu[euLocation][6] = -1;
+		
+		return eu;
 	}
 	
 	//NEED TO UPDATE
@@ -268,12 +270,12 @@ public class Simulator {
 				if(opcode == 0 || opcode == 1) {
 					//If the add/subtract space is free
 					if(eu[0][1] != -1) {
-						setEU(eu, rs, i, 0);
+						eu = setEU(eu, rs, i, 0);
 					} 
 				} else if(opcode == 2 || opcode == 3) {
 					//If the multiply/divide space is free
 					if(eu[1][1] != -1) {
-						setEU(eu, rs, i, 1);
+						eu = setEU(eu, rs, i, 1);
 					} 
 				}
 			}
@@ -436,6 +438,10 @@ public class Simulator {
 		System.out.println("--Instruction Queue--");
 		for(int i = iq.length - 1; i >= head; i--){
 			System.out.println(" " + iq[i]);
+		}
+		
+		if(head == iq.length) {
+			System.out.println("        empty    ");
 		}
 	}
 	
