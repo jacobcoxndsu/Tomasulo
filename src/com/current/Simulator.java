@@ -529,8 +529,6 @@ public class Simulator {
 		
 		while(cycle < numCycles){
 			
-			Print();
-			
 			//Components Step
 			int[] tempRf = rf_step(rf, rat, rs, eu, iq, rob);
 			int[] tempRat = rat_step(rf, rat, rs, eu, iq, rob);
