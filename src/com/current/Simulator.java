@@ -74,12 +74,12 @@ public class Simulator {
 		}
 		
 		//Create ROB
-		rob = new int[7][4];
-		for(int i = 1; i <= 6; i++){
-			rob[i][0] = 0; //REG
-			rob[i][1] = 0; //VAL
-			rob[i][2] = 0; //Done
-			rob[i][3] = 0; //Exception
+		rob = new int[6][4];
+		for(int i = 0; i < rob.length; i++){
+			rob[i][0] = -1; //REG
+			rob[i][1] = -1; //VAL
+			rob[i][2] = -1; //Done
+			rob[i][3] = -1; //Exception
 		}
 		
 		//Create pointers
@@ -116,7 +116,7 @@ public class Simulator {
 	private int[] rat_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq, int[][] rob){
 		rat = rat.clone();
 		//Issue
-		if(head < iq.length)
+		if(head < iq.length && (rob[issuePointer][0] != -1))
 		{	
 			rat[rob[issuePointer][0]] = issuePointer;
 		} 
@@ -158,76 +158,76 @@ public class Simulator {
 			rs[rsLocation][6] = -1;
 		}
 		
-	    //Issue
-		
-		//Instruction in the queue, ROB is ready, RS is empty
-		if(head < iq.length && (getFreeRob(rob) != -1)){
-			//Take next inst from IQ
-			int currentRS;
-			int endOfRS;
-			//Is it an add/sub or mult/div?
-			if(iq[head].opcode == 0 || iq[head].opcode == 1)
-			{
-				currentRS = 0;
-				endOfRS = 2;
-			}
-			else
-			{
-				currentRS = 3;
-				endOfRS = 4;
-			}
-			
-			while(currentRS <= endOfRS)
-			{
-				//check the busy bit
-				if(rs[currentRS][5] == 0)
+		//Issue
+
+			//Instruction in the queue, ROB is ready, RS is empty
+			if(head < iq.length /*&& (getFreeRob(rob) != -1)*/){
+				//Take next inst from IQ
+				int currentRS;
+				int endOfRS;
+				//Is it an add/sub or mult/div?
+				if(iq[head].opcode == 0 || iq[head].opcode == 1)
 				{
-					rs[currentRS][0] = iq[head].opcode;
-					
-					//Take the instruction from IQ - set busy bit
-					rs[currentRS][5] = 1;
-					
-					//Determine where inputs come from
-					if(rob[iq[head].sourceOp1][0] != -1) //changed from rat
-					{
-						//Use the value tag in RS
-						rs[currentRS][1] = rat[iq[head].sourceOp1];
-						rs[currentRS][3] = -1;
-					}
-					else
-					{
-						//use the value from rf
-						rs[currentRS][3] = rf[iq[head].sourceOp1];
-						rs[currentRS][1] = -1;
-					}
-					
-					//Do the same for second source
-					if(rob[iq[head].sourceOp2][0] != -1) //changed from rat
-					{
-						//Use the value tag in RS
-						rs[currentRS][2] = rat[iq[head].sourceOp2];
-						rs[currentRS][4] = -1;
-					}
-					else
-					{
-						//use the value from rf
-						rs[currentRS][4] = rf[iq[head].sourceOp2];
-						rs[currentRS][2] = -1;
-					}
-					//set the destination ROB Tag
-					rs[currentRS][6] = issuePointer;
-
-					head++;//Point to  next instruction
-					break;
-
+					currentRS = 0;
+					endOfRS = 2;
 				}
 				else
 				{
-					//Go to the next RS
-					currentRS++;
+					currentRS = 3;
+					endOfRS = 4;
 				}
-			}//Exit while loop - never put the instruction into an RS		
-		}
+				
+				while(currentRS <= endOfRS)
+				{
+					//check the busy bit
+					if(rs[currentRS][5] == -1)
+					{
+						rs[currentRS][0] = iq[head].opcode;
+						
+						//Take the instruction from IQ - set busy bit
+						rs[currentRS][5] = 1;
+						
+						//Determine where inputs come from
+						if(rat[iq[head].sourceOp1] != -1) //changed from rat
+						{
+							//Use the value tag in RS
+							rs[currentRS][1] = rat[iq[head].sourceOp1];
+							rs[currentRS][3] = -1;
+						}
+						else
+						{
+							//use the value from rf
+							rs[currentRS][3] = rat[iq[head].sourceOp1];
+							rs[currentRS][1] = -1;
+						}
+						
+						//Do the same for second source
+						if(rat[iq[head].sourceOp2] != -1) //changed from rat
+						{
+							//Use the value tag in RS
+							rs[currentRS][2] = rat[iq[head].sourceOp2];
+							rs[currentRS][4] = -1;
+						}
+						else
+						{
+							//use the value from rf
+							rs[currentRS][4] = rf[iq[head].sourceOp2];
+							rs[currentRS][2] = -1;
+						}
+						//set the destination ROB Tag
+						rs[currentRS][6] = issuePointer;
+
+						head++;//Point to  next instruction
+						break;
+
+					}
+					else
+					{
+						//Go to the next RS
+						currentRS++;
+					}
+				}//Exit while loop - never put the instruction into an RS		
+			}
 		
 		return rs;
 	}
@@ -293,6 +293,7 @@ public class Simulator {
 		if(head < iq.length && (getFreeRob(rob) != -1))
 		{
 			rob[issuePointer][0] = iq[head].destOp;
+			moveRobIssuePointerToFree(rob);
 			return rob;
 		}
 		
@@ -587,30 +588,27 @@ public class Simulator {
 		{
 			return issuePointer;
 		}
-		//issue pointer is moved to next free 
-		boolean robIsFree =  moveRobIssuePointerToFree(rob);
-		//there isn't a free one - send -1
-		if(!robIsFree)
-		{
-			return -1;
-		}
-		return issuePointer;
+		return -1;
 	
 	}
 	//DONE
-	public boolean moveRobIssuePointerToFree(int[][] rob)
+	public void moveRobIssuePointerToFree(int[][] rob)
 	{
-		for(int robEntry = 1; robEntry < rob.length; robEntry++)
+		if(issuePointer < rob.length - 1)
 		{
-			if(rob[robEntry][0] == -1)//ROB entry is open
+			issuePointer++;
+			if(rob[issuePointer][0] != -1)
 			{
-				issuePointer = robEntry;
-				return true;
+				issuePointer++;
 			}
 		}
-		
-		return false;
-		
+		else
+		{
+			for(int robRow = 0; robRow < rob.length; robRow++)
+			{
+				issuePointer = robRow;
+			}
+		}
 	}
 	//NEED TO WRITE
 	public boolean divideException(int[][] eu)
