@@ -28,7 +28,7 @@ public class Simulator {
 		//Create rf
 		rf = new int[rg.length];
 		for(int i = 0; i < rf.length; i++){
-			rf[i] = Integer.parseInt(rg[i]);
+			rf[i] = Integer.parseInt(rg[i]) + (int)(Math.random());
 		}
 		//Create rat
 		rat = new int[rg.length];
@@ -400,26 +400,18 @@ public class Simulator {
 	public void PrintRFandRATandROB(){
 		System.out.println(" --RF--       --RAT--       --ROB--");
 		
-		int robi = 0;
-		for(int i = 0; i < rf.length; i++){
-			System.out.print(i + ":    " + rf[i]);
-			if(rat[i] != -1){
-				if(rf[i] > 9){
-					System.out.print("        RS" + rat[i]);
-				} else {
-					System.out.print("         RS" + rat[i]);
-				}
-			} else {
-				System.out.print("            ");
-			}
-			
-			if(robi < rob.length) {
-				if(rf[i] > 9){
-					System.out.print("          RB" + (robi + 1) + ": " + rob[robi][1]);
-				} else {
-					System.out.print("         RB" + (robi + 1) + ": " + rob[robi][1]);
-				}
-				robi++;
+		for(int i = 0; i < rf.length; i++) {
+			if(i < rf.length && i < rat.length && i < rob.length) 
+			{
+				System.out.format(" " + i + ": %-10dRS" + i + ": %-9dRB" + (i + 1) + ": %-5d", rf[i], rat[i], rob[i][1]);
+				
+			} else if(i < rf.length && i < rat.length) 
+			{
+				System.out.format(" " + i + ": %-10dRS" + i + ": %-10d", rf[i], rat[i]);
+				
+			} else if(i < rf.length) 
+			{
+				System.out.format(" " + i + ": %d", rf[i]);
 			}
 			
 			System.out.println();
