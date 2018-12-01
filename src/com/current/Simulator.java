@@ -482,7 +482,7 @@ public class Simulator {
 		for(int i = 0; i < rf.length; i++) {
 			if(i < rf.length && i < rat.length && i < rob.length) 
 			{
-				System.out.format(" " + i + ": %-10dRS" + i + ": %-9d  RB" + (i + 1) + " :    %-10d%-10d%-13d%-5d", rf[i], rat[i], rob[i][0], rob[i][1], rob[i][2], rob[i][3]);
+				System.out.format(" " + i + ": %-10dRS" + i + ": %-9d  RB" + i + " :    %-10d%-10d%-13d%-5d", rf[i], rat[i], rob[i][0], rob[i][1], rob[i][2], rob[i][3]);
 				
 			} else if(i < rf.length && i < rat.length) 
 			{
