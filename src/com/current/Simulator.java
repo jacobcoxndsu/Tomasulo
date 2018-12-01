@@ -231,7 +231,9 @@ public class Simulator {
 		return rs;
 	}
 	
-	private void setEU(int[][] eu, int[][] rs, int location, int euLocation) {
+	private int[][] setEU(int[][] eu, int[][] rs, int location, int euLocation) {
+		eu = eu.clone();
+		
 		eu[euLocation][0] = rs[location][0]; // rs pcode -> eu opcode
 		eu[euLocation][1] = rs[location][6]; // rs destination -> eu robtag
 		eu[euLocation][2] = rs[location][3]; // rs Vj -> eu Val1
@@ -250,6 +252,8 @@ public class Simulator {
 		
 		eu[euLocation][5] = -1;
 		eu[euLocation][6] = -1;
+		
+		return eu;
 	}
 	
 	//NEED TO UPDATE
@@ -268,12 +272,28 @@ public class Simulator {
 				if(opcode == 0 || opcode == 1) {
 					//If the add/subtract space is free
 					if(eu[0][1] != -1) {
-						setEU(eu, rs, i, 0);
+						eu[0][0] = rs[0][0]; // rs pcode -> eu opcode
+						eu[0][1] = rs[0][6]; // rs destination -> eu robtag
+						eu[0][2] = rs[0][3]; // rs Vj -> eu Val1
+						eu[0][3] = rs[0][4]; // rs Vk -> eu Val2
+						
+						if(opcode == 0) {
+							eu[0][4] = 2;
+						} else if(opcode == 1) {
+							eu[0][4] = 2;
+						} else if(opcode == 2) {
+							eu[0][4] = 10;
+						} else if(opcode == 3) {
+							eu[0][4] = 40;
+						}
+						
+						eu[0][5] = -1;
+						eu[0][6] = -1;
 					} 
 				} else if(opcode == 2 || opcode == 3) {
 					//If the multiply/divide space is free
 					if(eu[1][1] != -1) {
-						setEU(eu, rs, i, 1);
+						eu = setEU(eu, rs, i, 1);
 					} 
 				}
 			}
@@ -399,10 +419,10 @@ public class Simulator {
 	//op qj qk vj vk busy dest disp
 	public void PrintReservationStation(){
 		System.out.println("                                  --ReservationStation--");
-		String[] info1 = {"          ","Op", "Qj", "Qk", "Vj", "Vk", "Busy", "Dest"};
+		String[] info1 = {"          ","Op", "Qj", "Qk", "Vj", "Vk", "Busy", "Dest", "DispReady"};
 		
-		System.out.format("%-11s%-11s%-11s%-11s%-11s%-11s%-11s%-11s\n", info1);
-		System.out.println("---------------------------------------------------------------------------------");
+		System.out.format("%-11s%-11s%-11s%-11s%-11s%-11s%-11s%-11s%-11s\n", info1);
+		System.out.println("-------------------------------------------------------------------------------------------------");
 		
 		for(int i = 0; i < rs.length; i++){
 			String[] info2 = new String[9];
@@ -414,8 +434,9 @@ public class Simulator {
 			info2[5] = String.valueOf(rs[i][4]);
 			info2[6] = String.valueOf(rs[i][5]);
 			info2[7] = String.valueOf(rs[i][6]);
+			info2[8] = String.valueOf(rs[i][7]);
 			
-			System.out.format("%-11s%-11s%-11s%-11s%-11s%-11s%-11s%-11s\n", info2);
+			System.out.format("%-11s%-11s%-11s%-11s%-11s%-11s%-11s%-14s%-11s\n", info2);
 		}
 
 	}
@@ -429,7 +450,10 @@ public class Simulator {
 		
 		for(int i = 0; i < eu.length; i++){
 			String[] info2 = new String[9];
-			info2[0] = "    RS" + (i + 1) + "  ";
+			if(i == 0)
+				info2[0] = "    +,-"  + "  ";
+			if(i == 1)
+				info2[0] = "    *,/"  + "  ";
 			info2[1] = String.valueOf(eu[i][0]);
 			info2[2] = String.valueOf(eu[i][1]);
 			info2[3] = String.valueOf(eu[i][2]);
@@ -446,6 +470,10 @@ public class Simulator {
 		System.out.println("--Instruction Queue--");
 		for(int i = iq.length - 1; i >= head; i--){
 			System.out.println(" " + iq[i]);
+		}
+		
+		if(head == iq.length) {
+			System.out.println("        empty    ");
 		}
 	}
 	
