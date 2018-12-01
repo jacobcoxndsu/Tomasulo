@@ -398,7 +398,7 @@ public class Simulator {
 	}
 	
 	public void PrintRFandRATandROB(){
-		System.out.println(" --RF--       --RAT--         --ROB--");
+		System.out.println(" --RF--       --RAT--       --ROB--");
 		
 		int robi = 0;
 		for(int i = 0; i < rf.length; i++){
@@ -415,9 +415,9 @@ public class Simulator {
 			
 			if(robi < rob.length) {
 				if(rf[i] > 9){
-					System.out.print("            RB" + (robi + 1) + ":  " + rob[robi][1]);
+					System.out.print("          RB" + (robi + 1) + ":  " + rob[robi][1]);
 				} else {
-					System.out.print("           RB" + (robi + 1) + ":  " + rob[robi][1]);
+					System.out.print("         RB" + (robi + 1) + ":  " + rob[robi][1]);
 				}
 				robi++;
 			}
