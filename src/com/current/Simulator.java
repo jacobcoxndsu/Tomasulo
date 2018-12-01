@@ -297,7 +297,7 @@ public class Simulator {
 		{
 			if(eu[euRows][5] == 1)
 			{
-				for(int k = 0; k < 8; k++)
+				for(int k = 0; k < 7; k++)
 				{
 					eu[euRows][k] = -1;
 				}
