@@ -100,7 +100,7 @@ public class Simulator {
 		
 		//Broadcast
 			
-		int rsLocation = getEUBroadcast(eu, rs);
+		int rsLocation = getEUIndexForBroadcast(eu);
 		if(rsLocation != -1){
 			int temp = calculate(eu, rs);
 			if(temp != -2){
@@ -123,10 +123,9 @@ public class Simulator {
 		
 		//Commit
 		 //need the row of the rob (commit pointer)
-		if(rob[commitPointer][1] != -1)//When we are ready to commit - if it has broadcasted and commitPointer
+		if(rob[commitPointer][2] != -1)//When we are ready to commit - if it has broadcasted and commitPointer
 		{
 			rat[rob[commitPointer][0]] = -1;
-			commitPointer++;
 		}
 		
 		return rat;
@@ -240,9 +239,7 @@ public class Simulator {
 		//What is this doing?
 		//Dispatch
 			//Receive the instruction from the RS
-		
-		
-			//hold in RS and count down the cycle
+
 		for(int i = 0; i < 3; i++){
 			if(rs[i][3] != -1 && rs[i][4] != -1){
 				if(eu[0][0] == -1){
@@ -300,20 +297,20 @@ public class Simulator {
 		}
 		
 		//Broadcast - capture the result into ROB, set DONE
-		int euLocation = getEUBroadcast(eu,rs);
-		int robLocation = eu[euLocation][2];
+		int euLocation = getEUIndexForBroadcast(eu);
 		if(euLocation != -1)//ready to receive a broadcast
 		{
+			int robLocation = eu[euLocation][2];
 			//go to entry of rob with dst tag
-			rob[robLocation][1] = calculate(eu,rs);
+			rob[robLocation][1] = calculate(eu,rs);//Value
 			rob[robLocation][2] = 1; //Done
-			rob[robLocation][3] = eu[euLocation][7];
+			rob[robLocation][3] = eu[euLocation][6];//Exception
 			return rob;//Exit before the commit
 		}
 		
 		//Commit - clear ROB entry
 		//Exception - need to add
-		if((commitPointer == robLocation) && rob[commitPointer][3] == 1)
+		if((rob[commitPointer][2] == 1) && rob[commitPointer][3] == 1)//ROB entry is ready to commit and has an exception
 		{
 			for(int nextRobEntry = commitPointer + 1; nextRobEntry < rob.length; nextRobEntry++)
 			{
@@ -324,14 +321,18 @@ public class Simulator {
 			}
 		}
 		
-		//Clear the rob entry
-		if((commitPointer == robLocation) && rob[robLocation][2] == 1) 
+		//Clear the rob entry after a commit
+		if(rob[commitPointer][2] == 1) 
 		{
 			for(int j = 0; j < 4; j++)
 			{
-				rob[robLocation][j] = -1;
+				rob[commitPointer][j] = -1;
 			}
 			commitPointer++;
+			if(commitPointer > rob.length - 1)
+			{
+				commitPointer = rob.length - 1;
+			}
 		}
 		
 		return rob;
@@ -426,29 +427,26 @@ public class Simulator {
 	}
 	
 	//NEED TO UPDATE
-	public int getEUBroadcast(int[][] eu, int[][] rs){
+	public int getEUIndexForBroadcast(int[][] eu){
 		//Check Multiply/Divide first
-		for(int i = 0; i < 2; i++){
-			int cc = eu[i][1];
-			int location = eu[i][0];
-			if(location != -1){
-				int type = rs[location][0];
-				
-				if(type == 2){
-					if(cc > 10){
-						return location;
-					}
-				} else if(type == 3){
-					if(cc > 40){
-						return location;
-					}
-				} else if(type == 0 || type == 1){
-					if(cc > 2){
-						return location;
-					}
+		for(int euRow = 0; euRow < 2; euRow++)
+		{
+			int cc = eu[euRow][4];
+			int robTag = eu[euRow][1];
+			int opType = eu[euRow][0];
+			int broadcastFlag = eu[euRow][5];
+			
+			if(robTag != -1)//There is an entry in the EU
+			{
+				if((opType == 2 || opType == 3) && (broadcastFlag == 1))
+				{
+					return euRow;
+				} 
+				else if(broadcastFlag == 1)
+				{
+					return euRow;
 				} 
 			}
-			
 		}
 		 return -1;
 	}
