@@ -493,7 +493,7 @@ public class Simulator {
 	}
 	
 	//NEED TO UPDATE - depends on getEUBroadcastInEU
-	public int calculate(int[][]eu, int[][] rs){
+	public int calculate(int[][]eu, int[][] rs) {
 		
 		//Check if EU is ready to broadcast
 		int rsLocation = getEUBroadcastInEU(eu);
