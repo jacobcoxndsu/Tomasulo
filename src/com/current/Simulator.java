@@ -234,30 +234,7 @@ public class Simulator {
 		return rs;
 	}
 	
-	private int[][] setEU(int[][] eu, int[][] rs, int location, int euLocation) {
-		eu = eu.clone();
-		
-		eu[euLocation][0] = rs[location][0]; // rs pcode -> eu opcode
-		eu[euLocation][1] = rs[location][6]; // rs destination -> eu robtag
-		eu[euLocation][2] = rs[location][3]; // rs Vj -> eu Val1
-		eu[euLocation][3] = rs[location][4]; // rs Vk -> eu Val2
-		
-		int opcode = rs[location][0];
-		if(opcode == 0) {
-			eu[euLocation][4] = 2;
-		} else if(opcode == 1) {
-			eu[euLocation][4] = 2;
-		} else if(opcode == 2) {
-			eu[euLocation][4] = 10;
-		} else if(opcode == 3) {
-			eu[euLocation][4] = 40;
-		}
-		
-		eu[euLocation][5] = -1;
-		eu[euLocation][6] = -1;
-		
-		return eu;
-	}
+
 	
 	//NEED TO UPDATE
 	private int[][] eu_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
@@ -274,29 +251,35 @@ public class Simulator {
 				//Add/Subtract
 				if(opcode == 0 || opcode == 1) {
 					//If the add/subtract space is free
-					if(eu[0][1] != -1) {
+					if(eu[0][1] == -1) {
+						
 						eu[0][0] = rs[0][0]; // rs pcode -> eu opcode
 						eu[0][1] = rs[0][6]; // rs destination -> eu robtag
 						eu[0][2] = rs[0][3]; // rs Vj -> eu Val1
 						eu[0][3] = rs[0][4]; // rs Vk -> eu Val2
 						
-						if(opcode == 0) {
-							eu[0][4] = 2;
-						} else if(opcode == 1) {
-							eu[0][4] = 2;
-						} else if(opcode == 2) {
-							eu[0][4] = 10;
-						} else if(opcode == 3) {
-							eu[0][4] = 40;
-						}
 						
+						eu[0][4] = 2;
+
 						eu[0][5] = -1;
 						eu[0][6] = -1;
 					} 
 				} else if(opcode == 2 || opcode == 3) {
 					//If the multiply/divide space is free
-					if(eu[1][1] != -1) {
-						eu = setEU(eu, rs, i, 1);
+					if(eu[1][1] == -1) {
+						eu[1][0] = rs[0][0]; // rs pcode -> eu opcode
+						eu[1][1] = rs[0][6]; // rs destination -> eu robtag
+						eu[1][2] = rs[0][3]; // rs Vj -> eu Val1
+						eu[1][3] = rs[0][4]; // rs Vk -> eu Val2
+						
+						if(opcode == 2) {
+							eu[1][4] = 10;
+						} else if(opcode == 3) {
+							eu[1][4] = 40;
+						}
+						
+						eu[1][5] = -1;
+						eu[1][6] = -1;
 					} 
 				}
 			}
@@ -351,10 +334,13 @@ public class Simulator {
 		{
 			int robLocation = eu[euLocation][2];
 			//go to entry of rob with dst tag
-			rob[robLocation][1] = calculate(eu,rs, robLocation);//Value
-			rob[robLocation][2] = 1; //Done
-			rob[robLocation][3] = eu[euLocation][6];//Exception
-			return rob;//Exit before the commit
+			if(robLocation != -1) {
+				rob[robLocation][1] = calculate(eu,rs, robLocation);//Value
+				rob[robLocation][2] = 1; //Done
+				rob[robLocation][3] = eu[euLocation][6];//Exception
+				return rob;//Exit before the commit
+			}
+			
 		}
 		
 		//Commit - clear ROB entry
@@ -593,7 +579,7 @@ public class Simulator {
 			}
 		}
 		
-		return -1;
+		return 0;
 	}
 
 	//DONE
