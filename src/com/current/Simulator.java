@@ -293,7 +293,17 @@ public class Simulator {
 		//Broadcast
 		//Check the broadcast flag
 		//Clear the first entry found (and only the first one)
-		
+		for(int euRows = 0; euRows < eu.length; euRows++)	
+		{
+			if(eu[euRows][5] == 1)
+			{
+				for(int k = 0; k < 8; k++)
+				{
+					eu[euRows][k] = -1;
+				}
+				break;
+			}
+		}
 
 		
 		//Executing
