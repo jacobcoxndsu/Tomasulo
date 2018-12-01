@@ -112,9 +112,9 @@ public class Simulator {
 	private int[] rat_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq, int[][] rob){
 		rat = rat.clone();
 		//Issue
-		if(head < iq.length && (rob[issuePointer][0] != -1))
+		if(head < iq.length && (getFreeRob(rob) != -1))
 		{	
-			rat[rob[issuePointer][0]] = issuePointer;
+			rat[iq[head].destOp] = issuePointer;
 		} 
 		
 		//Commit
@@ -193,7 +193,7 @@ public class Simulator {
 						else
 						{
 							//use the value from rf
-							rs[currentRS][3] = rat[iq[head].sourceOp1];
+							rs[currentRS][3] = rf[iq[head].sourceOp1];
 							rs[currentRS][1] = -1;
 						}
 						
