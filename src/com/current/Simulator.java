@@ -145,16 +145,19 @@ public class Simulator {
 		}
 		//Find the next one that will be dispatched
 		int rsLocation = getNextRSDispatch(rs);//which RS entries are supposed to be freed?
-		int euLocation = getFreeEU(eu,rs);
-		if((rsLocation != -1) && (euLocation != -1))//if the values are ready
-		{
-			rs[rsLocation][0] = -1;
-			rs[rsLocation][1] = -1;
-			rs[rsLocation][2] = -1;
-			rs[rsLocation][3] = -1;
-			rs[rsLocation][4] = -1;
-			rs[rsLocation][5] = -1;
-			rs[rsLocation][6] = -1;
+		for(int i = 0; i < eu.length; i++) {
+			if(rsLocation != -1) {
+				if(eu[i][1] == rs[rsLocation][6]) {
+					rs[rsLocation][0] = -1;
+					rs[rsLocation][1] = -1;
+					rs[rsLocation][2] = -1;
+					rs[rsLocation][3] = -1;
+					rs[rsLocation][4] = -1;
+					rs[rsLocation][5] = -1;
+					rs[rsLocation][6] = -1;
+					break;
+				}
+			}
 		}
 		
 		//Issue
