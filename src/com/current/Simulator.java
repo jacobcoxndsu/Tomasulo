@@ -378,6 +378,10 @@ public class Simulator {
 		
 		System.out.println();
 		
+		PrintExecutionUnit();
+		
+		System.out.println();
+		
 		PrintRFandRATandROB();
 		
 	}
@@ -404,6 +408,28 @@ public class Simulator {
 			System.out.format("%-11s%-11s%-11s%-11s%-11s%-11s%-11s%-11s\n", info2);
 		}
 
+	}
+	
+	public void PrintExecutionUnit() {
+		System.out.println("                                  --Execution unit--");
+		String[] info1 = {"          ","Op", "RobTag", "Val1", "Val2", "cc", "BCReady", "Exception"};
+		
+		System.out.format("%-11s%-11s%-11s%-11s%-11s%-9s%-11s%-11s\n", info1);
+		System.out.println("------------------------------------------------------------------------------------");
+		
+		for(int i = 0; i < eu.length; i++){
+			String[] info2 = new String[9];
+			info2[0] = "    RS" + (i + 1) + "  ";
+			info2[1] = String.valueOf(eu[i][0]);
+			info2[2] = String.valueOf(eu[i][1]);
+			info2[3] = String.valueOf(eu[i][2]);
+			info2[4] = String.valueOf(eu[i][3]);
+			info2[5] = String.valueOf(eu[i][4]);
+			info2[6] = String.valueOf(eu[i][5]);
+			info2[7] = String.valueOf(eu[i][6]);
+			
+			System.out.format("%-11s%-11s%-11s%-11s%-11s%-11s%-11s%-11s\n", info2);
+		}
 	}
 	
 	public void PrintInstructionQueue(){
