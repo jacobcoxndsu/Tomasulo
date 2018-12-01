@@ -2,7 +2,7 @@ Group Members: Samira Sadat and Jacob Cox
 
 1. To edit the instructions that will be executed edit the Test.txt File.
 
-2. To run our application double click the RUN.bat file on a windows computer with windows 7 or greater. 
+2. To run our application double click the RUN.bat file on a computer with windows 7 or greater. 
 
 3. To look at our code you can open the files in any text editor. 
 
