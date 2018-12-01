@@ -509,14 +509,10 @@ public class Simulator {
 			
 			if(robTag != -1)//There is an entry in the EU
 			{
-				if((opType == 2 || opType == 3) && (broadcastFlag == 1))
+				if(broadcastFlag == 1)
 				{
 					return euRow;
-				} 
-				else if(broadcastFlag == 1)
-				{
-					return euRow;
-				} 
+				}
 			}
 		}
 		 return -1;
