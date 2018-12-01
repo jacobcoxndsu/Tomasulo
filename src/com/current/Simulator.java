@@ -300,7 +300,10 @@ public class Simulator {
 				eu[euRows][5] = 1;
 			}
 			//decrement the cc for each 
-			eu[euRows][4]--;
+			if(eu[euRows][4] > 0)
+			{
+				eu[euRows][4]--;
+			}
 		}
 			
 			
