@@ -239,8 +239,7 @@ public class Simulator {
 		//What is this doing?
 		//Dispatch
 			//Receive the instruction from the RS
-			//hold in RS  - set the cc based on op
-			//
+
 		for(int i = 0; i < 3; i++){
 			if(rs[i][3] != -1 && rs[i][4] != -1){
 				if(eu[0][0] == -1){
@@ -363,7 +362,7 @@ public class Simulator {
 		
 		System.out.println();
 		
-		PrintRFandRAT();
+		PrintRFandRATandROB();
 		
 	}
 	
@@ -398,9 +397,10 @@ public class Simulator {
 		}
 	}
 	
-	public void PrintRFandRAT(){
-		System.out.println(" --RF--       --RAT--");
+	public void PrintRFandRATandROB(){
+		System.out.println(" --RF--       --RAT--         --ROB--");
 		
+		int robi = 0;
 		for(int i = 0; i < rf.length; i++){
 			System.out.print(i + ":    " + rf[i]);
 			if(rat[i] != -1){
@@ -409,6 +409,17 @@ public class Simulator {
 				} else {
 					System.out.print("         RS" + rat[i]);
 				}
+			} else {
+				System.out.print("            ");
+			}
+			
+			if(robi < rob.length) {
+				if(rf[i] > 9){
+					System.out.print("            RB" + (robi + 1) + ":  " + rob[robi][1]);
+				} else {
+					System.out.print("           RB" + (robi + 1) + ":  " + rob[robi][1]);
+				}
+				robi++;
 			}
 			
 			System.out.println();
@@ -525,6 +536,8 @@ public class Simulator {
 		System.out.println("\n\n");
 		
 		while(cycle < numCycles){
+			
+			Print();
 			
 			//Components Step
 			int[] tempRf = rf_step(rf, rat, rs, eu, iq, rob);
