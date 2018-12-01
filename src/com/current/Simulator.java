@@ -230,6 +230,28 @@ public class Simulator {
 		
 		return rs;
 	}
+	
+	private void setEU(int[][] eu, int[][] rs, int location, int euLocation) {
+		eu[euLocation][0] = rs[location][0]; // rs pcode -> eu opcode
+		eu[euLocation][1] = rs[location][6]; // rs destination -> eu robtag
+		eu[euLocation][2] = rs[location][3]; // rs Vj -> eu Val1
+		eu[euLocation][3] = rs[location][4]; // rs Vk -> eu Val2
+		
+		int opcode = rs[location][0];
+		if(opcode == 0) {
+			eu[euLocation][4] = 2;
+		} else if(opcode == 1) {
+			eu[euLocation][4] = 2;
+		} else if(opcode == 2) {
+			eu[euLocation][4] = 10;
+		} else if(opcode == 3) {
+			eu[euLocation][4] = 40;
+		}
+		
+		eu[euLocation][5] = -1;
+		eu[euLocation][6] = -1;
+	}
+	
 	//NEED TO UPDATE
 	private int[][] eu_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq){
 		eu = eu.clone();
@@ -238,39 +260,33 @@ public class Simulator {
 		//What is this doing?
 		//Dispatch
 			//Receive the instruction from the RS
+		
+		for(int i = 0; i < rs.length; i++) {
+			if(rs[i][7] == 1) {
+				int opcode = rs[i][0];
+				//Add/Subtract
+				if(opcode == 0 || opcode == 1) {
+					//If the add/subtract space is free
+					if(eu[0][1] != -1) {
+						setEU(eu, rs, i, 0);
+					} 
+				} else if(opcode == 2 || opcode == 3) {
+					//If the multiply/divide space is free
+					if(eu[1][1] != -1) {
+						setEU(eu, rs, i, 1);
+					} 
+				}
+			}
+		}
+		
+		if(eu[1][0] == 3 && eu[1][3] == 0) {
+			eu[1][6] = 1;
+		}
 
-		for(int i = 0; i < 3; i++){
-			if(rs[i][3] != -1 && rs[i][4] != -1){
-				if(eu[0][0] == -1){
-					eu[0][0] = i;
-					eu[0][1] = 0;
-				}
-			}
-		}
-		
-		for(int i = 3; i < rs.length; i++){
-			if(rs[i][3] != -1 && rs[i][4] != -1){
-				if(eu[1][0] == -1){
-					eu[1][0] = i;
-					eu[1][1] = 0;
-				}
-			}
-		}
 		
 		
-		//Check if they are done... Check if it is done executing?
-		int locationInEU = getEUBroadcastInEU(eu);
-		if(locationInEU != -1){
-			eu[locationInEU][1] = -1;
-		}
 		
-		if(eu[0][0] != -1){
-			eu[0][1]++;
-		}
-		
-		if(eu[1][0] != -1){
-			eu[1][1]++;
-		}
+
 		
 		//Executing
 			//Check if cycles equal 0 
@@ -302,7 +318,7 @@ public class Simulator {
 		{
 			int robLocation = eu[euLocation][2];
 			//go to entry of rob with dst tag
-			rob[robLocation][1] = calculate(eu,rs);//Value
+			rob[robLocation][1] = calculate(eu,rs, robLocation);//Value
 			rob[robLocation][2] = 1; //Done
 			rob[robLocation][3] = eu[euLocation][6];//Exception
 			return rob;//Exit before the commit
@@ -483,54 +499,31 @@ public class Simulator {
 	}
 	
 	//NEED TO UPDATE - depends on getEUBroadcastInEU
-	public int calculate(int[][]eu, int[][] rs) {
+	public int calculate(int[][]eu, int[][] rs, int rbLocation) {
 		
-		
-		if(eu[1][5] == 1){
-			//Multiply/Divide
-		} if(eu[0][5] == 1) {
-			//Add/Subtract
-			int robTag = eu[0][1];
-			if(robTag != -1) {
-				
-			}
-		} 
-		
-		
-		
-		
-		
-		//Check if EU is ready to broadcast
-		int rsLocation = getEUBroadcastInEU(eu);
-		
-		//The EU is ready
-		if(rsLocation != -1){
-			//Multiply
-			if(rs[rsLocation][0] == 2)
-			{
-				return eu[rsLocation][2] * eu[rsLocation][3];
-			}
-			//Divide
-			else if (rs[rsLocation][0] == 3)
-			{
-				//THIS IS THE EXCEPTION
-				if(rs[rsLocation][4] != 0){
-					return rs[rsLocation][3] / rs[rsLocation][4];
-				} else {
-					//Change to an exception handling flag
-					System.out.println("Attempted to divide by zero...");
+		for(int i = 0; i < eu.length; i++) {
+			if(eu[i][1] == rbLocation) {
+				if(eu[i][5] == 1) {
+					//Ready to BroadCast and has a location
+					int opcode = eu[i][0];
+					
+					//Add
+					if(opcode == 0) {
+						return eu[i][2] + eu[i][3];
+					//Subtract
+					} else if(opcode == 1) {
+						return eu[i][2] - eu[i][3];
+					//Multiply
+					} else if(opcode == 2) {
+						return eu[i][2] * eu[i][3];
+					//DIvide
+					} else if(opcode == 3) {
+						if(eu[i][3] != 0) {
+							return eu[i][2] / eu[i][3];
+						}
+					}
 				}
 			}
-			//Add
-			else if(rs[rsLocation][0] == 0) 
-			{
-				return rs[rsLocation][3] + rs[rsLocation][4];
-			} 
-			//Subtract
-			else if(rs[rsLocation][0] == 1) 
-			{
-				return rs[rsLocation][3] - rs[rsLocation][4];
-			}		
 		}
 		
 		return -1;
