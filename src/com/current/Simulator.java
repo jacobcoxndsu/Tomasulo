@@ -485,6 +485,21 @@ public class Simulator {
 	//NEED TO UPDATE - depends on getEUBroadcastInEU
 	public int calculate(int[][]eu, int[][] rs) {
 		
+		
+		if(eu[1][5] == 1){
+			//Multiply/Divide
+		} if(eu[0][5] == 1) {
+			//Add/Subtract
+			int robTag = eu[0][1];
+			if(robTag != -1) {
+				
+			}
+		} 
+		
+		
+		
+		
+		
 		//Check if EU is ready to broadcast
 		int rsLocation = getEUBroadcastInEU(eu);
 		
@@ -493,7 +508,7 @@ public class Simulator {
 			//Multiply
 			if(rs[rsLocation][0] == 2)
 			{
-				return rs[rsLocation][3] * rs[rsLocation][4];
+				return eu[rsLocation][2] * eu[rsLocation][3];
 			}
 			//Divide
 			else if (rs[rsLocation][0] == 3)
@@ -552,13 +567,7 @@ public class Simulator {
 			cycle++;
 		}
 		
-		Print();
-	
-		//System.out.println("Finished");
-		
-		System.out.println("\nPress Enter Close: ");
-		Scanner in = new Scanner(System.in);
-		String temp = in.nextLine();		
+		Print();		
 		
 	}
 	//DONE
