@@ -395,16 +395,16 @@ public class Simulator {
 	}
 	
 	public void PrintRFandRATandROB(){
-		System.out.println(" --RF--       --RAT--       --ROB--");
+		System.out.println(" --RF--       --RAT--              --Reg--  --Value--  --Done--  --Exception--");
 		
 		for(int i = 0; i < rf.length; i++) {
 			if(i < rf.length && i < rat.length && i < rob.length) 
 			{
-				System.out.format(" " + i + ": %-10dRS" + i + ": %-9dRB" + (i + 1) + ": %-5d", rf[i], rat[i], rob[i][1]);
+				System.out.format(" " + i + ": %-10dRS" + i + ":   %-9dRB" + (i + 1) + ":    %-10d%-10d%-13d%-5d", rf[i], rat[i], rob[i][0], rob[i][1], rob[i][2], rob[i][3]);
 				
 			} else if(i < rf.length && i < rat.length) 
 			{
-				System.out.format(" " + i + ": %-10dRS" + i + ": %-10d", rf[i], rat[i]);
+				System.out.format(" " + i + ": %-10dRS" + i + ":   %-9d", rf[i], rat[i]);
 				
 			} else if(i < rf.length) 
 			{
