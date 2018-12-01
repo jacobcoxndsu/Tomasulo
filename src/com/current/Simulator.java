@@ -584,11 +584,11 @@ public class Simulator {
 	//NEED TO WRITE
 	public boolean divideException(int[][] eu)
 	{
-		
+		return false;
 	}
 	//NEED TO WRITE
 	public int getFreeEU(int[][]eu, int [][] rs)
 	{
-		
+		return -1;
 	}
 }
