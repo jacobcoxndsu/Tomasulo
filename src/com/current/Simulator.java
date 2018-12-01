@@ -134,6 +134,31 @@ public class Simulator {
 	//DONE
 	private int[][] rs_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq, int[][] rob){
 		rs = rs.clone();
+		
+		//Dispatch - free the RS - done before issue to avoid issue and dispatch in same cycle.
+		
+		//Set the dispatch flags
+		for(int rsRow = 0; rsRow < rs.length; rsRow++)
+		{
+			if(rsDispatchReady(rs, rsRow))
+			{
+				rs[rsRow][7] = 1;
+			}
+		}
+		//Find the next one that will be dispatched
+		int rsLocation = getNextRSDispatch(rs);//which RS entries are supposed to be freed?
+		int euLocation = getFreeEU(eu,rs);
+		if((rsLocation != -1) && (euLocation != -1))//if the values are ready
+		{
+			rs[rsLocation][0] = -1;
+			rs[rsLocation][1] = -1;
+			rs[rsLocation][2] = -1;
+			rs[rsLocation][3] = -1;
+			rs[rsLocation][4] = -1;
+			rs[rsLocation][5] = -1;
+			rs[rsLocation][6] = -1;
+		}
+		
 	    //Issue
 		
 		//Instruction in the queue, ROB is ready, RS is empty
@@ -193,7 +218,7 @@ public class Simulator {
 					//set the destination ROB Tag
 					rs[currentRS][6] = issuePointer;
 
-					head++;
+					head++;//Point to  next instruction
 					break;
 
 				}
@@ -202,30 +227,7 @@ public class Simulator {
 					//Go to the next RS
 					currentRS++;
 				}
-			}			
-		}
-		
-	    //Dispatch - free the RS
-		//Set the dispatch flags
-		for(int rsRow = 0; rsRow < rs.length; rsRow++)
-		{
-			if(rsDispatchReady(rs, rsRow))
-			{
-				rs[rsRow][7] = 1;
-			}
-		}
-		//Find the next one that will be dispatched
-		int rsLocation = getNextRSDispatch(rs);//which RS entries are supposed to be freed?
-		int euLocation = getFreeEU(eu,rs);
-		if((rsLocation != -1) && (euLocation != -1))//if the values are ready
-		{
-			rs[rsLocation][0] = -1;
-			rs[rsLocation][1] = -1;
-			rs[rsLocation][2] = -1;
-			rs[rsLocation][3] = -1;
-			rs[rsLocation][4] = -1;
-			rs[rsLocation][5] = -1;
-			rs[rsLocation][6] = -1;
+			}//Exit while loop - never put the instruction into an RS		
 		}
 		
 		return rs;
@@ -237,6 +239,8 @@ public class Simulator {
 		
 		//What is this doing?
 		//Dispatch
+			//Receive the instruction from the RS
+			//hold in RS and count down the cycle
 		for(int i = 0; i < 3; i++){
 			if(rs[i][3] != -1 && rs[i][4] != -1){
 				if(eu[0][0] == -1){
@@ -270,12 +274,20 @@ public class Simulator {
 			eu[1][1]++;
 		}
 		
-		//commit
+		//Executing
+			//Check if cycles equal 0 
+			//Set the broadcast flag (make a function)
+			//decrement the cc for each 
+		
+		//Broadcast
+			//Check the broadcast flag
+			//Clear the first entry found (and only the first one)
+			
 		
 		
 		return eu;
 	}
-	//DONE - Please double check
+	//NEED TO CHECK
 	private int[][] rob_step(int[] rf, int[] rat, int[][] rs, int[][]eu, InstructionRecord[] iq, int[][] rob){
 		rob = rob.clone();
 		//Issue - put instruction into the ROB if available
@@ -293,10 +305,24 @@ public class Simulator {
 			//go to entry of rob with dst tag
 			rob[robLocation][1] = calculate(eu,rs);
 			rob[robLocation][2] = 1; //Done
+			rob[robLocation][3] = eu[euLocation][7];
 			return rob;//Exit before the commit
 		}
 		
 		//Commit - clear ROB entry
+		//Exception - need to add
+		if((commitPointer == robLocation) && rob[commitPointer][3] == 1)
+		{
+			for(int nextRobEntry = commitPointer + 1; nextRobEntry < rob.length; nextRobEntry++)
+			{
+				for(int j = 0; j < 4; j++)
+				{
+					rob[nextRobEntry][j] = -1;
+				}
+			}
+		}
+		
+		//Clear the rob entry
 		if((commitPointer == robLocation) && rob[robLocation][2] == 1) 
 		{
 			for(int j = 0; j < 4; j++)
@@ -305,6 +331,7 @@ public class Simulator {
 			}
 			commitPointer++;
 		}
+		
 		return rob;
 	}
 	
@@ -584,11 +611,11 @@ public class Simulator {
 	//NEED TO WRITE
 	public boolean divideException(int[][] eu)
 	{
-		
+		return false;
 	}
 	//NEED TO WRITE
 	public int getFreeEU(int[][]eu, int [][] rs)
 	{
-		
+		return -1;
 	}
 }
