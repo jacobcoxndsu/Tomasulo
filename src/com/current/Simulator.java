@@ -98,17 +98,13 @@ public class Simulator {
 		
 		//Dispatch
 		
-		//Broadcast
+		//Commit
 			
-		int rsLocation = getEUIndexForBroadcast(eu);
-		if(rsLocation != -1){
-			int temp = calculate(eu, rs);
-			if(temp != -2){
-				rf[rs[rsLocation][6]] = calculate(eu, rs);
-			}
+		int register = rob[commitPointer][0];
+		if(rob[commitPointer][2] == 1){
+			rf[register] = rob[commitPointer][1];//Rob value goes to rf
 		}
 			
-
 		return rf;
 	}
 	
