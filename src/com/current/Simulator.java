@@ -415,9 +415,9 @@ public class Simulator {
 			
 			if(robi < rob.length) {
 				if(rf[i] > 9){
-					System.out.print("          RB" + (robi + 1) + ":  " + rob[robi][1]);
+					System.out.print("          RB" + (robi + 1) + ": " + rob[robi][1]);
 				} else {
-					System.out.print("         RB" + (robi + 1) + ":  " + rob[robi][1]);
+					System.out.print("         RB" + (robi + 1) + ": " + rob[robi][1]);
 				}
 				robi++;
 			}
